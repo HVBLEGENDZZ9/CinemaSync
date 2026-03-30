@@ -133,16 +133,18 @@ Deno.serve(async (req: Request) => {
     // R2 S3-compatible endpoint
     const r2Endpoint = `https://${r2AccountId}.r2.cloudflarestorage.com/${r2BucketName}/${objectKey}`;
 
-    // Create a presigned PUT request — expires in 15 minutes (900 seconds)
+    // Create a presigned PUT request — expires in 15 minutes (900 seconds).
+    // IMPORTANT: Do NOT include Content-Length — browsers strip it as a forbidden
+    // header, which would cause a signature mismatch and a CORS/403 error.
+    // Only Content-Type is signed; it must match what the XHR sends.
     const signedRequest = await aws.sign(
       new Request(r2Endpoint, {
         method: "PUT",
         headers: {
           "Content-Type": contentType,
-          "Content-Length": String(fileSizeBytes),
         },
       }),
-      { aws: { signQuery: true, allHeaders: true }, expiresIn: 900 },
+      { aws: { signQuery: true }, expiresIn: 900 },
     );
 
     const uploadUrl = signedRequest.url;
