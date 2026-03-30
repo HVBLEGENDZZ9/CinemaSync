@@ -43,7 +43,7 @@ export function useRoom() {
       const { data, error } = await supabase
         .from('video_library')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('uploaded_at', { ascending: false })
 
       if (!error && data) {
         setLibrary(data)

@@ -51,11 +51,11 @@ export default function Library({ videos, activeUrl, onSelect }) {
         style={{ maxHeight: 'calc(100vh - 360px)' }}
       >
         {videos.map((video) => {
-          const isActive = video.url === activeUrl
+          const isActive = video.file_url === activeUrl
           return (
             <button
               key={video.id}
-              onClick={() => onSelect(video.url)}
+              onClick={() => onSelect(video.file_url)}
               className="group flex items-center gap-3 rounded-[6px] px-3 py-2.5 text-left w-full"
               style={{
                 backgroundColor: isActive
@@ -100,7 +100,7 @@ export default function Library({ videos, activeUrl, onSelect }) {
                     color: 'var(--text-secondary)',
                   }}
                 >
-                  {formatFileSize(video.file_size)}
+                  {formatFileSize(video.file_size_bytes)}
                 </span>
               </div>
             </button>

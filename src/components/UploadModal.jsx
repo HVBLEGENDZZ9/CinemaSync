@@ -67,6 +67,7 @@ export default function UploadModal({ isOpen, onClose }) {
             body: JSON.stringify({
               filename: uploadFile.name,
               contentType: uploadFile.type,
+              fileSizeBytes: uploadFile.size,
             }),
           }
         )
@@ -107,9 +108,8 @@ export default function UploadModal({ isOpen, onClose }) {
           .from('video_library')
           .insert({
             filename: uploadFile.name,
-            url: publicUrl,
-            file_size: uploadFile.size,
-            content_type: uploadFile.type,
+            file_url: publicUrl,
+            file_size_bytes: uploadFile.size,
           })
 
         if (insertError) {

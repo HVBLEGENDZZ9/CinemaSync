@@ -114,7 +114,11 @@ const VideoPlayer = forwardRef(function VideoPlayer(
         onPlaying={handleBufferEnd}
         onReady={onReady}
         config={{
-          youtube: {},
+          youtube: {
+            playerVars: {
+              origin: typeof window !== 'undefined' ? window.location.origin : '',
+            },
+          },
         }}
       />
 
