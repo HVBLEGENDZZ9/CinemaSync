@@ -71,9 +71,8 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   if (!url) {
     return (
       <div
-        className="w-full flex flex-col items-center justify-center gap-3"
+        className="w-full h-full flex flex-col items-center justify-center gap-3"
         style={{
-          aspectRatio: '16 / 9',
           backgroundColor: 'var(--bg-base)',
         }}
       >
@@ -94,10 +93,9 @@ const VideoPlayer = forwardRef(function VideoPlayer(
 
   return (
     <div
-      className="relative w-full"
+      className="relative w-full h-full"
       style={{
-        aspectRatio: '16 / 9',
-        backgroundColor: 'var(--bg-base)',
+        backgroundColor: 'black',
       }}
     >
       <ReactPlayer

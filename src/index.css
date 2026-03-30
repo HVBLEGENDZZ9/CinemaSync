@@ -187,3 +187,28 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 2px;
   transition: width 150ms ease-out;
 }
+
+/* Fullscreen mode styles */
+.player-container:fullscreen {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.player-container:fullscreen .control-bar-wrapper {
+  background-color: #000 !important;
+  padding-bottom: 30px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+.player-container:-webkit-full-screen {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.player-container:-webkit-full-screen .control-bar-wrapper {
+  background-color: #000 !important;
+  padding-bottom: 30px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}

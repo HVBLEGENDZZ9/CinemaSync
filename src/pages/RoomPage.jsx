@@ -18,6 +18,7 @@ export default function RoomPage() {
   const { room, library, getCatchUpState, updateRoomUrl, roomId } = useRoom()
 
   const playerRef = useRef(null)
+  const playerContainerRef = useRef(null)
   const isSyncingRef = useRef(false)
   const partnerBufferingRef = useRef(false)
 
@@ -173,6 +174,22 @@ export default function RoomPage() {
     }
   }, [isPlaying, handlePlay, handlePause])
 
+  const handleToggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      if (playerContainerRef.current?.requestFullscreen) {
+        playerContainerRef.current.requestFullscreen()
+      } else if (playerContainerRef.current?.webkitRequestFullscreen) {
+        playerContainerRef.current.webkitRequestFullscreen()
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen()
+      }
+    }
+  }, [])
+
   const handleSeek = useCallback(
     (time) => {
       isSyncingRef.current = true
@@ -258,10 +275,13 @@ export default function RoomPage() {
         </header>
 
         {/* Main content */}
-        <div className="flex flex-1 min-h-0 relative z-10 w-full max-w-7xl mx-auto md:p-4">
-          <div className="flex flex-1 min-h-0 w-full bg-white/5 dark:bg-black/40 backdrop-blur-2xl md:rounded-3xl border-0 md:border md:border-black/5 md:dark:border-white/5 shadow-2xl overflow-hidden flex-col md:flex-row">
+        <div className="flex flex-1 min-h-0 relative z-10 w-full max-w-7xl mx-auto md:p-4 overflow-y-auto md:overflow-hidden">
+          <div className="flex flex-col md:flex-row min-h-min md:h-full w-full bg-white/5 dark:bg-black/40 backdrop-blur-2xl md:rounded-3xl border-0 md:border md:border-black/5 md:dark:border-white/5 shadow-2xl overflow-hidden">
             {/* Player + controls column */}
-            <div className="flex flex-col flex-1 min-w-0">
+            <div 
+              ref={playerContainerRef}
+              className="flex flex-col w-full md:flex-1 min-w-0 bg-white/5 dark:bg-black/40 md:bg-transparent player-container min-h-[40vh] md:min-h-0"
+            >
               {/* Player */}
               <div className="flex-1 flex items-center justify-center min-h-0 p-2 md:p-5">
                 <div className="w-full h-full max-w-full rounded-2xl overflow-hidden bg-black/80 shadow-inner flex items-center justify-center relative">
@@ -282,8 +302,8 @@ export default function RoomPage() {
               </div>
 
               {/* Control bar */}
-              <div className="px-2 md:px-5 pb-2 md:pb-5">
-                <div className="bg-black/5 dark:bg-white/5 backdrop-blur-md border border-black/5 dark:border-white/5 rounded-2xl p-1 shadow-sm">
+              <div className="px-2 md:px-5 pb-2 md:pb-5 control-bar-wrapper">
+                <div className="bg-black/5 dark:bg-white/5 backdrop-blur-md border border-black/5 dark:border-white/5 rounded-2xl p-1 shadow-sm control-bar-inner">
                   <ControlBar
                     isPlaying={isPlaying}
                     currentTime={currentTime}
@@ -292,6 +312,7 @@ export default function RoomPage() {
                     onSeek={handleSeek}
                     muted={muted}
                     onToggleMute={() => setMuted((m) => !m)}
+                    onToggleFullscreen={handleToggleFullscreen}
                   />
                 </div>
               </div>

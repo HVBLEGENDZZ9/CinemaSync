@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { Play, Pause, Volume2, VolumeX } from 'lucide-react'
+import { Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react'
 import { formatTime } from '../lib/sync'
 
 export default function ControlBar({
@@ -10,6 +10,7 @@ export default function ControlBar({
   onSeek,
   muted,
   onToggleMute,
+  onToggleFullscreen,
 }) {
   const seekRef = useRef(null)
   const [isSeeking, setIsSeeking] = useState(false)
@@ -105,6 +106,19 @@ export default function ControlBar({
         aria-label={muted ? 'Unmute' : 'Mute'}
       >
         {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+      </button>
+
+      {/* Fullscreen */}
+      <button
+        onClick={onToggleFullscreen}
+        className="shrink-0 flex items-center justify-center ml-2"
+        style={{
+          color: 'var(--text-secondary)',
+          transition: 'color 150ms ease-out',
+        }}
+        aria-label="Full Screen"
+      >
+        <Maximize size={18} />
       </button>
     </div>
   )
