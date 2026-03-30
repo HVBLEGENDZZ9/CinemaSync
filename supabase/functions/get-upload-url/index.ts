@@ -144,7 +144,7 @@ Deno.serve(async (req: Request) => {
           "Content-Type": contentType,
         },
       }),
-      { aws: { signQuery: true }, expiresIn: 900 },
+      { aws: { signQuery: true, expiresIn: 900 } },
     );
 
     const uploadUrl = signedRequest.url;
