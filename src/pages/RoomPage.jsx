@@ -270,7 +270,7 @@ export default function RoomPage() {
                 muted={muted}
                 onPlay={handlePlay}
                 onPause={handlePause}
-                onProgress={handleProgress}
+                onTimeUpdate={handleProgress}
                 onDuration={handleDuration}
                 onBuffer={handleBuffer}
                 onBufferEnd={handleBufferEnd}

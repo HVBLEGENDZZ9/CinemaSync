@@ -1,5 +1,9 @@
 import { useState, useCallback } from 'react'
 
+function isValidUrl(str) {
+  return /^https?:\/\/.+/i.test(str)
+}
+
 export default function UrlInput({ onSubmit }) {
   const [value, setValue] = useState('')
 
@@ -11,6 +15,18 @@ export default function UrlInput({ onSubmit }) {
       }
     },
     [value, onSubmit]
+  )
+
+  const handlePaste = useCallback(
+    (e) => {
+      const pasted = e.clipboardData?.getData('text')?.trim()
+      if (pasted && isValidUrl(pasted)) {
+        e.preventDefault()
+        onSubmit(pasted)
+        setValue('')
+      }
+    },
+    [onSubmit]
   )
 
   return (
@@ -29,7 +45,8 @@ export default function UrlInput({ onSubmit }) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Paste URL, press Enter"
+        onPaste={handlePaste}
+        placeholder="Paste URL or type & press Enter"
         className="w-full rounded-[6px] px-3 py-2 text-[13px] leading-[1.2] outline-none"
         style={{
           backgroundColor: 'transparent',

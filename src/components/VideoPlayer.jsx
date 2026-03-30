@@ -8,7 +8,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     isPlaying,
     onPlay,
     onPause,
-    onProgress,
+    onTimeUpdate,
     onDuration,
     onBuffer,
     onBufferEnd,
@@ -20,15 +20,19 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   const playerRef = useRef(null)
   const [isBuffering, setIsBuffering] = useState(false)
 
+  // react-player v3: ref gives us the underlying HTMLMediaElement
+  // Expose a stable API to parent via useImperativeHandle
   useImperativeHandle(ref, () => ({
     seekTo: (seconds) => {
-      playerRef.current?.seekTo(seconds, 'seconds')
+      if (playerRef.current) {
+        playerRef.current.currentTime = seconds
+      }
     },
     getCurrentTime: () => {
-      return playerRef.current?.getCurrentTime() ?? 0
+      return playerRef.current?.currentTime ?? 0
     },
     getDuration: () => {
-      return playerRef.current?.getDuration() ?? 0
+      return playerRef.current?.duration ?? 0
     },
   }))
 
@@ -41,6 +45,28 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     setIsBuffering(false)
     onBufferEnd?.()
   }, [onBufferEnd])
+
+  // react-player v3: onTimeUpdate fires native timeupdate events
+  const handleTimeUpdate = useCallback(
+    (e) => {
+      const el = e.target
+      if (el && onTimeUpdate) {
+        onTimeUpdate({ playedSeconds: el.currentTime })
+      }
+    },
+    [onTimeUpdate]
+  )
+
+  // react-player v3: onDurationChange fires when duration is available
+  const handleDurationChange = useCallback(
+    (e) => {
+      const el = e.target
+      if (el && onDuration && Number.isFinite(el.duration)) {
+        onDuration(el.duration)
+      }
+    },
+    [onDuration]
+  )
 
   if (!url) {
     return (
@@ -76,7 +102,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     >
       <ReactPlayer
         ref={playerRef}
-        url={url}
+        src={url}
         playing={isPlaying}
         muted={muted}
         controls={false}
@@ -84,20 +110,13 @@ const VideoPlayer = forwardRef(function VideoPlayer(
         height="100%"
         onPlay={onPlay}
         onPause={onPause}
-        onProgress={onProgress}
-        onDuration={onDuration}
-        onBuffer={handleBuffer}
-        onBufferEnd={handleBufferEnd}
+        onTimeUpdate={handleTimeUpdate}
+        onDurationChange={handleDurationChange}
+        onWaiting={handleBuffer}
+        onPlaying={handleBufferEnd}
         onReady={onReady}
-        progressInterval={250}
         config={{
-          youtube: {
-            playerVars: {
-              disablekb: 1,
-              modestbranding: 1,
-              rel: 0,
-            },
-          },
+          youtube: {},
         }}
       />
 
