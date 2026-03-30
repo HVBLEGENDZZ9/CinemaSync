@@ -16,17 +16,11 @@ export default function ControlBar({
   const [isSeeking, setIsSeeking] = useState(false)
   const [localSeekValue, setLocalSeekValue] = useState(0)
 
-  // Derive displayed seek value: use local value while dragging, otherwise currentTime
   const seekValue = isSeeking ? localSeekValue : (currentTime || 0)
+  const fillPercent = duration > 0 ? (seekValue / duration) * 100 : 0
 
-  const handleSeekStart = useCallback(() => {
-    setIsSeeking(true)
-  }, [])
-
-  const handleSeekChange = useCallback((e) => {
-    setLocalSeekValue(parseFloat(e.target.value))
-  }, [])
-
+  const handleSeekStart = useCallback(() => setIsSeeking(true), [])
+  const handleSeekChange = useCallback((e) => setLocalSeekValue(parseFloat(e.target.value)), [])
   const handleSeekEnd = useCallback(
     (e) => {
       const time = parseFloat(e.target.value)
@@ -36,90 +30,128 @@ export default function ControlBar({
     [onSeek]
   )
 
-  // Compute fill percentage for the seek bar background
-  const fillPercent =
-    duration > 0 ? (seekValue / duration) * 100 : 0
-
   return (
     <div
-      className="flex items-center gap-4 px-5 shrink-0"
+      id="cs-controlbar"
       style={{
-        height: '48px',
-        backgroundColor: 'var(--bg-surface)',
-        borderTop: '1px solid var(--border)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2px',
+        padding: '8px 16px 12px',
       }}
     >
-      {/* Play / Pause */}
-      <button
-        onClick={onPlayPause}
-        className="shrink-0 flex items-center justify-center"
-        style={{
-          color: 'var(--text-primary)',
-          transition: 'color 150ms ease-out',
-        }}
-        aria-label={isPlaying ? 'Pause' : 'Play'}
-      >
-        {isPlaying ? <Pause size={18} /> : <Play size={18} />}
-      </button>
-
-      {/* Timestamp */}
-      <span
-        className="shrink-0 text-[12px] leading-[1.2] tabular-nums"
-        style={{
-          fontFamily: "'DM Mono', monospace",
-          color: 'var(--text-secondary)',
-          minWidth: '90px',
-        }}
-      >
-        {formatTime(seekValue)} / {formatTime(duration)}
-      </span>
-
-      {/* Seek bar */}
-      <div className="flex-1 flex items-center">
-        <input
-          ref={seekRef}
-          type="range"
-          min={0}
-          max={duration || 0}
-          step={0.1}
-          value={seekValue}
-          onMouseDown={handleSeekStart}
-          onTouchStart={handleSeekStart}
-          onChange={handleSeekChange}
-          onMouseUp={handleSeekEnd}
-          onTouchEnd={handleSeekEnd}
-          aria-label="Seek"
+      {/* Seek row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* Time */}
+        <span
           style={{
-            background: `linear-gradient(to right, var(--accent) 0%, var(--accent) ${fillPercent}%, var(--border) ${fillPercent}%, var(--border) 100%)`,
+            fontSize: '12px',
+            fontFamily: 'var(--font-mono)',
+            color: 'rgba(240,236,230,0.7)',
+            whiteSpace: 'nowrap',
+            minWidth: '88px',
+            letterSpacing: '0.03em',
           }}
-        />
+        >
+          {formatTime(seekValue)} / {formatTime(duration)}
+        </span>
+
+        {/* Seek bar */}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+          <input
+            ref={seekRef}
+            id="cs-seekbar"
+            type="range"
+            min={0}
+            max={duration || 0}
+            step={0.1}
+            value={seekValue}
+            onMouseDown={handleSeekStart}
+            onTouchStart={handleSeekStart}
+            onChange={handleSeekChange}
+            onMouseUp={handleSeekEnd}
+            onTouchEnd={handleSeekEnd}
+            aria-label="Seek"
+            style={{
+              background: `linear-gradient(to right, var(--accent) 0%, var(--accent) ${fillPercent}%, rgba(255,255,255,0.15) ${fillPercent}%, rgba(255,255,255,0.15) 100%)`,
+            }}
+          />
+        </div>
       </div>
 
-      {/* Volume */}
-      <button
-        onClick={onToggleMute}
-        className="shrink-0 flex items-center justify-center"
+      {/* Buttons row */}
+      <div
         style={{
-          color: 'var(--text-secondary)',
-          transition: 'color 150ms ease-out',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
         }}
-        aria-label={muted ? 'Unmute' : 'Mute'}
       >
-        {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-      </button>
+        {/* Play / Pause */}
+        <CtrlBtn
+          id="cs-playpause"
+          onClick={onPlayPause}
+          aria-label={isPlaying ? 'Pause' : 'Play'}
+          primary
+        >
+          {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+        </CtrlBtn>
 
-      {/* Fullscreen */}
-      <button
-        onClick={onToggleFullscreen}
-        className="shrink-0 flex items-center justify-center ml-2"
-        style={{
-          color: 'var(--text-secondary)',
-          transition: 'color 150ms ease-out',
-        }}
-        aria-label="Full Screen"
-      >
-        <Maximize size={18} />
-      </button>
+        <div style={{ flex: 1 }} />
+
+        {/* Mute */}
+        <CtrlBtn
+          id="cs-mute"
+          onClick={onToggleMute}
+          aria-label={muted ? 'Unmute' : 'Mute'}
+        >
+          {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+        </CtrlBtn>
+
+        {/* Fullscreen */}
+        <CtrlBtn
+          id="cs-fullscreen"
+          onClick={onToggleFullscreen}
+          aria-label="Full Screen"
+        >
+          <Maximize size={17} />
+        </CtrlBtn>
+      </div>
     </div>
+  )
+}
+
+function CtrlBtn({ children, primary, ...props }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      {...props}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: primary ? '40px' : '36px',
+        height: primary ? '40px' : '36px',
+        borderRadius: primary ? '50%' : '8px',
+        border: 'none',
+        background: primary
+          ? hovered
+            ? 'rgba(232,149,122,0.25)'
+            : 'rgba(255,255,255,0.1)'
+          : hovered
+            ? 'rgba(255,255,255,0.1)'
+            : 'transparent',
+        color: primary
+          ? hovered ? 'var(--accent)' : 'var(--text-primary)'
+          : hovered ? 'var(--text-primary)' : 'rgba(240,236,230,0.6)',
+        cursor: 'pointer',
+        transition: 'all 150ms var(--ease-out)',
+        flexShrink: 0,
+      }}
+    >
+      {children}
+    </button>
   )
 }

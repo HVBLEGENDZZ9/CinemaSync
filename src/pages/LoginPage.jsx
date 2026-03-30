@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import { BackgroundPaths } from '@/components/ui/background-paths'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -15,110 +14,212 @@ export default function LoginPage() {
       setSubmitting(true)
       await login(username.trim(), password)
       setSubmitting(false)
-      // Navigation is handled by auth state change in App
     },
     [username, password, login]
   )
 
   return (
-    <BackgroundPaths title="Cinema Sync">
-      <div className="flex flex-col items-center page-enter" style={{ width: '280px' }}>
-        {/* Brand mark */}
-        <span
-          className="text-[12px] leading-[1.2] mb-2"
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            letterSpacing: '0.3em',
-            color: 'var(--text-secondary)',
-          }}
-        >
-          SYNC
-        </span>
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'var(--bg-void)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        /* subtle radial glow top-center */
+        backgroundImage:
+          'radial-gradient(ellipse 60% 34% at 50% 0%, rgba(232,149,122,0.07) 0%, transparent 70%)',
+      }}
+    >
+      {/* Ambient orb */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: '-10%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '480px',
+          height: '480px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(232,149,122,0.08) 0%, transparent 65%)',
+          pointerEvents: 'none',
+          filter: 'blur(40px)',
+        }}
+      />
 
-        {/* Tagline */}
-        <span
-          className="text-[13px] leading-[1.6] mb-10"
-          style={{ color: 'var(--text-secondary)' }}
-        >
-          your private cinema.
-        </span>
+      {/* Card */}
+      <div
+        className="anim-fade-up"
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '340px',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--radius-xl)',
+          padding: '36px 28px 28px',
+          boxShadow: '0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--border-soft)',
+        }}
+      >
+        {/* Logo mark */}
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+          {/* Film icon — SVG inline */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '52px',
+              height: '52px',
+              borderRadius: '14px',
+              background: 'var(--accent-dim)',
+              border: '1px solid rgba(232,149,122,0.2)',
+              marginBottom: '16px',
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="2.5"/>
+              <line x1="7" y1="2" x2="7" y2="22"/>
+              <line x1="17" y1="2" x2="17" y2="22"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <line x1="2" y1="7" x2="7" y2="7"/>
+              <line x1="17" y1="7" x2="22" y2="7"/>
+              <line x1="17" y1="17" x2="22" y2="17"/>
+              <line x1="2" y1="17" x2="7" y2="17"/>
+            </svg>
+          </div>
+
+          <h1
+            style={{
+              fontSize: '20px',
+              fontWeight: 600,
+              letterSpacing: '-0.01em',
+              color: 'var(--text-primary)',
+              marginBottom: '6px',
+            }}
+          >
+            Cinema Sync
+          </h1>
+          <p
+            style={{
+              fontSize: '13px',
+              color: 'var(--text-secondary)',
+              letterSpacing: '0.01em',
+            }}
+          >
+            your private cinema.
+          </p>
+        </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full backdrop-blur-md p-6 rounded-2xl bg-white/5 dark:bg-black/20 border border-black/10 dark:border-white/10 shadow-xl">
-          <input
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <LoginInput
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
             autoComplete="username"
             autoFocus
-            className="w-full rounded-[6px] px-3 py-2.5 text-[14px] leading-[1.2] outline-none"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.05)',
-              border: '1px solid var(--border)',
-              color: 'var(--text-primary)',
-              transition: 'border-color 150ms ease-out',
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = 'var(--accent)'
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = 'var(--border)'
-            }}
+            id="cs-username"
           />
-
-          <input
+          <LoginInput
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             autoComplete="current-password"
-            className="w-full rounded-[6px] px-3 py-2.5 text-[14px] leading-[1.2] outline-none"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.05)',
-              border: '1px solid var(--border)',
-              color: 'var(--text-primary)',
-              transition: 'border-color 150ms ease-out',
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = 'var(--accent)'
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = 'var(--border)'
-            }}
+            id="cs-password"
           />
 
           <button
+            id="cs-submit"
             type="submit"
             disabled={submitting || !username.trim() || !password.trim()}
-            className="w-full rounded-[6px] py-2.5 text-[14px] leading-[1.2] flex items-center justify-center gap-2"
             style={{
-              backgroundColor: 'var(--text-primary)',
-              color: 'var(--bg-base)',
+              marginTop: '6px',
+              width: '100%',
+              padding: '12px',
+              borderRadius: 'var(--radius-sm)',
+              border: 'none',
+              background: submitting || !username.trim() || !password.trim()
+                ? 'var(--bg-elevated)'
+                : 'linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%)',
+              color: submitting || !username.trim() || !password.trim()
+                ? 'var(--text-tertiary)'
+                : '#fff',
               fontWeight: 600,
-              opacity:
-                submitting || !username.trim() || !password.trim() ? 0.5 : 1,
-              cursor:
-                submitting || !username.trim() || !password.trim()
-                  ? 'not-allowed'
-                  : 'pointer',
-              transition: 'all 150ms ease-out',
+              fontSize: '14px',
+              cursor: submitting || !username.trim() || !password.trim() ? 'not-allowed' : 'pointer',
+              transition: 'all 200ms var(--ease-out)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              letterSpacing: '0.01em',
             }}
           >
-            {submitting ? <span className="spinner" /> : 'Enter'}
+            {submitting
+              ? <><span className="spinner" style={{ borderTopColor: '#fff' }} /> Signing in…</>
+              : 'Enter the cinema'
+            }
           </button>
 
-          {/* Error */}
           {error && (
             <p
-              className="text-[13px] leading-[1.6] text-center mt-2"
-              style={{ color: 'var(--danger)' }}
+              style={{
+                marginTop: '4px',
+                fontSize: '13px',
+                color: 'var(--danger)',
+                textAlign: 'center',
+                lineHeight: 1.5,
+              }}
             >
               {error}
             </p>
           )}
         </form>
+
+        {/* Divider hint */}
+        <p
+          style={{
+            marginTop: '20px',
+            fontSize: '12px',
+            color: 'var(--text-tertiary)',
+            textAlign: 'center',
+            letterSpacing: '0.02em',
+          }}
+        >
+          invite-only · just the two of you
+        </p>
       </div>
-    </BackgroundPaths>
+    </div>
+  )
+}
+
+function LoginInput({ id, ...props }) {
+  const [focused, setFocused] = useState(false)
+  return (
+    <input
+      id={id}
+      {...props}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      style={{
+        width: '100%',
+        padding: '11px 14px',
+        borderRadius: 'var(--radius-sm)',
+        border: `1px solid ${focused ? 'rgba(232,149,122,0.5)' : 'var(--border)'}`,
+        background: focused ? 'rgba(232,149,122,0.04)' : 'var(--bg-elevated)',
+        color: 'var(--text-primary)',
+        fontSize: '14px',
+        outline: 'none',
+        transition: 'border-color 180ms, background 180ms',
+        WebkitAppearance: 'none',
+      }}
+    />
   )
 }
