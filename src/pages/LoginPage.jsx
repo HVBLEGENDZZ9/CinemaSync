@@ -28,7 +28,7 @@ export default function LoginPage() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '24px',
+        padding: 'calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom))',
         /* subtle radial glow top-center */
         backgroundImage:
           'radial-gradient(ellipse 60% 34% at 50% 0%, rgba(232,149,122,0.07) 0%, transparent 70%)',
