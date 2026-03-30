@@ -1,0 +1,1 @@
+- [project_cinemasync.md](./project_cinemasync.md) — CinemaSync: private two-person sync video platform, React 18 + Vite + Tailwind + Supabase

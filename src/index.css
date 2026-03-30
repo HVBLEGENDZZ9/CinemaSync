@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-base: #080a0f;
+  --color-bg-surface: #0e1117;
+  --color-bg-elevated: #161b24;
+  --color-border: #1e2535;
+  --color-border-active: #2e3f5c;
+  --color-text-primary: #e8edf5;
+  --color-text-secondary: #5a6a82;
+  --color-text-tertiary: #2e3f5c;
+  --color-accent: #4f8ef7;
+  --color-accent-dim: #1a2d4f;
+  --color-danger: #e05c5c;
+  --color-success: #3ecf8e;
+
+  --font-body: 'Figtree', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+:root {
+  --bg-base: #080a0f;
+  --bg-surface: #0e1117;
+  --bg-elevated: #161b24;
+  --border: #1e2535;
+  --border-active: #2e3f5c;
+  --text-primary: #e8edf5;
+  --text-secondary: #5a6a82;
+  --text-tertiary: #2e3f5c;
+  --accent: #4f8ef7;
+  --accent-dim: #1a2d4f;
+  --danger: #e05c5c;
+  --success: #3ecf8e;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Figtree', sans-serif;
+  font-weight: 400;
+  color: var(--text-primary);
+  background: var(--bg-base);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+input,
+button,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-active);
+}
+
+/* Page enter animation */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: page-enter 300ms ease-out both;
+}
+
+/* Spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--bg-base);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 600ms linear infinite;
+}
+
+/* Custom range input (seek bar) */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: -3px;
+  transition: transform 150ms ease-out;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.3);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+}
+
+/* Upload progress bar */
+.progress-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 150ms ease-out;
+}

@@ -1,0 +1,1 @@
+- [project_cinemasync_architecture.md](./project_cinemasync_architecture.md) — CinemaSync backend: Supabase + Cloudflare R2, no traditional server, private two-person video sync app
