@@ -56,6 +56,10 @@ export default function UploadModal({ isOpen, onClose }) {
         const { data: { session } } = await supabase.auth.getSession()
         const token = session?.access_token
 
+        if (!token) {
+          throw new Error('Not logged in — please sign in before uploading')
+        }
+
         const response = await fetch(
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-upload-url`,
           {
@@ -73,7 +77,9 @@ export default function UploadModal({ isOpen, onClose }) {
         )
 
         if (!response.ok) {
-          throw new Error('Failed to get upload URL')
+          const errBody = await response.text()
+          console.error('get-upload-url error:', response.status, errBody)
+          throw new Error(`Failed to get upload URL (${response.status})`)
         }
 
         const { uploadUrl, publicUrl } = await response.json()
