@@ -272,11 +272,18 @@ input, button, textarea {
   z-index: 50;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
+  gap: 8px;
+  padding: 8px 10px;
   background: var(--bg-deep);
   border-bottom: 1px solid var(--border);
-  height: 56px;
+  height: 52px;
+}
+@media (min-width: 480px) {
+  .yt-topbar {
+    gap: 10px;
+    padding: 10px 16px;
+    height: 56px;
+  }
 }
 @media (min-width: 768px) {
   .yt-topbar {
@@ -287,15 +294,22 @@ input, button, textarea {
 
 .yt-search-wrapper {
   flex: 1;
+  min-width: 0;          /* KEY: allow flex shrink on narrow screens */
   max-width: 720px;
   display: flex;
   align-items: center;
-  height: 40px;
-  border-radius: 20px;
+  height: 36px;
+  border-radius: 18px;
   background: var(--bg-surface);
   border: 1px solid var(--border);
   overflow: hidden;
   transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+@media (min-width: 480px) {
+  .yt-search-wrapper {
+    height: 40px;
+    border-radius: 20px;
+  }
 }
 .yt-search-wrapper:focus-within {
   border-color: var(--blue);
@@ -304,23 +318,33 @@ input, button, textarea {
 
 .yt-search-input {
   flex: 1;
+  min-width: 0;          /* allow text to truncate */
   height: 100%;
-  padding: 0 16px;
-  font-size: 14px;
+  padding: 0 12px;
+  /* 16px prevents iOS Safari auto-zoom on focus */
+  font-size: 16px;
   background: transparent;
   border: none;
   outline: none;
   color: var(--text-primary);
 }
+@media (min-width: 480px) {
+  .yt-search-input {
+    padding: 0 16px;
+    font-size: 14px;
+  }
+}
 .yt-search-input::placeholder {
   color: var(--text-tertiary);
+  font-size: 13px;
 }
 
 .yt-search-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
+  width: 42px;
+  flex-shrink: 0;
   height: 100%;
   background: var(--bg-elevated);
   border: none;
@@ -328,6 +352,11 @@ input, button, textarea {
   cursor: pointer;
   color: var(--text-secondary);
   transition: background 150ms, color 150ms;
+}
+@media (min-width: 480px) {
+  .yt-search-btn {
+    width: 52px;
+  }
 }
 .yt-search-btn:hover {
   background: var(--bg-hover);

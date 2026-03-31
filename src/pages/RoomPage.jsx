@@ -173,25 +173,25 @@ export default function RoomPage() {
       {/* ── 1. YouTube-Style Top Bar ── */}
       <div className="yt-topbar" style={{ paddingTop: 'calc(10px + env(safe-area-inset-top))' }}>
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
           <div
             style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
+              width: '28px',
+              height: '28px',
+              borderRadius: '7px',
               background: 'var(--gradient-pink-blue)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 12px var(--accent-glow)',
+              flexShrink: 0,
             }}
           >
-            <PlaySquare size={16} color="#fff" fill="#fff" />
+            <PlaySquare size={14} color="#fff" fill="#fff" />
           </div>
           <span
             className="hidden sm:inline"
             style={{
-              fontSize: '16px',
+              fontSize: '15px',
               fontWeight: 700,
               letterSpacing: '-0.01em',
               color: '#fff',
@@ -203,7 +203,7 @@ export default function RoomPage() {
         </div>
 
         {/* URL / Search Bar */}
-        <div className="yt-search-wrapper" style={{ margin: '0 auto' }}>
+        <div className="yt-search-wrapper">
           <input
             type="url"
             className="yt-search-input"
@@ -224,7 +224,7 @@ export default function RoomPage() {
         </div>
 
         {/* Right Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
           <PresenceIndicator partner={partnerPresence} />
 
           <button
@@ -235,8 +235,8 @@ export default function RoomPage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '36px',
-              height: '36px',
+              width: '32px',
+              height: '32px',
               borderRadius: '50%',
               background: 'transparent',
               border: 'none',
@@ -253,7 +253,7 @@ export default function RoomPage() {
               e.currentTarget.style.color = 'var(--text-secondary)'
             }}
           >
-            <LibraryIcon size={18} />
+            <LibraryIcon size={16} />
           </button>
 
           {/* User avatar / menu */}
@@ -265,8 +265,8 @@ export default function RoomPage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '32px',
-              height: '32px',
+              width: '28px',
+              height: '28px',
               borderRadius: '50%',
               border: 'none',
               background: 'var(--gradient-pink-blue)',
