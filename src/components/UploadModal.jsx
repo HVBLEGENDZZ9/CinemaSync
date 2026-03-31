@@ -113,6 +113,7 @@ export default function UploadModal({ isOpen, onClose }) {
         const { error: insertError } = await supabase
           .from('video_library')
           .insert({
+            user_id: session.user.id,
             filename: uploadFile.name,
             file_url: publicUrl,
             file_size_bytes: uploadFile.size,
