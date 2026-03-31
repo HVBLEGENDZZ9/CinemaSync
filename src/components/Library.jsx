@@ -1,4 +1,4 @@
-import { Play } from 'lucide-react'
+import { Play, Film } from 'lucide-react'
 
 function formatFileSize(bytes) {
   if (!bytes) return '0 B'
@@ -15,98 +15,107 @@ function formatFileSize(bytes) {
 export default function Library({ videos, activeUrl, onSelect }) {
   if (videos.length === 0) {
     return (
-      <div className="flex flex-col gap-2">
-        <label
-          className="text-[10px] uppercase tracking-[0.1em] leading-[1.2]"
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            color: 'var(--text-secondary)',
-          }}
-        >
-          Library
-        </label>
-        <p
-          className="text-[13px] leading-[1.6]"
-          style={{ color: 'var(--text-secondary)' }}
-        >
-          No videos yet
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px 20px',
+        gap: '12px',
+      }}>
+        <div style={{
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid var(--border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <Film size={22} style={{ color: 'var(--text-tertiary)' }} />
+        </div>
+        <p style={{
+          fontSize: '13px',
+          color: 'var(--text-secondary)',
+          textAlign: 'center',
+        }}>
+          No videos uploaded yet
         </p>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <label
-        className="text-[10px] uppercase tracking-[0.1em] leading-[1.2]"
-        style={{
-          fontFamily: "'DM Mono', monospace",
-          color: 'var(--text-secondary)',
-        }}
-      >
-        Library
-      </label>
-      <div
-        className="flex flex-col gap-0.5 overflow-y-auto"
-        style={{ maxHeight: 'calc(100vh - 360px)' }}
-      >
-        {videos.map((video) => {
-          const isActive = video.file_url === activeUrl
-          return (
-            <button
-              key={video.id}
-              onClick={() => onSelect(video.file_url)}
-              className="group flex items-center gap-3 rounded-[6px] px-3 py-2.5 text-left w-full"
-              style={{
-                backgroundColor: isActive
-                  ? 'var(--accent-dim)'
-                  : 'transparent',
-                borderLeft: isActive
-                  ? '2px solid var(--accent)'
-                  : '2px solid transparent',
-                transition:
-                  'background-color 150ms ease-out, border-color 150ms ease-out',
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.backgroundColor = 'var(--bg-elevated)'
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.backgroundColor = 'transparent'
-                }
-              }}
-            >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      {videos.map((video) => {
+        const isActive = video.file_url === activeUrl
+        return (
+          <button
+            key={video.id}
+            onClick={() => onSelect(video.file_url)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              borderRadius: '8px',
+              padding: '10px 12px',
+              textAlign: 'left',
+              width: '100%',
+              backgroundColor: isActive ? 'var(--accent-dim)' : 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background-color 150ms ease',
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive) e.currentTarget.style.backgroundColor = 'var(--bg-elevated)'
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'
+            }}
+          >
+            {/* Thumbnail placeholder */}
+            <div style={{
+              width: '48px',
+              height: '36px',
+              borderRadius: '4px',
+              background: isActive
+                ? 'var(--gradient-pink-blue)'
+                : 'var(--bg-surface)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              border: isActive ? 'none' : '1px solid var(--border)',
+            }}>
               <Play
-                size={14}
-                className="shrink-0 opacity-0 group-hover:opacity-100"
-                style={{
-                  color: 'var(--text-secondary)',
-                  transition: 'opacity 150ms ease-out',
-                }}
+                size={12}
+                fill={isActive ? '#fff' : 'var(--text-tertiary)'}
+                color={isActive ? '#fff' : 'var(--text-tertiary)'}
               />
-              <div className="flex flex-col gap-0.5 min-w-0">
-                <span
-                  className="text-[13px] leading-[1.2] truncate"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  {video.filename}
-                </span>
-                <span
-                  className="text-[11px] leading-[1.2]"
-                  style={{
-                    fontFamily: "'DM Mono', monospace",
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  {formatFileSize(video.file_size_bytes)}
-                </span>
-              </div>
-            </button>
-          )
-        })}
-      </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0 }}>
+              <span style={{
+                fontSize: '13px',
+                fontWeight: isActive ? 600 : 400,
+                color: isActive ? 'var(--accent)' : 'var(--text-primary)',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
+                {video.filename}
+              </span>
+              <span style={{
+                fontSize: '11px',
+                fontFamily: 'var(--font-mono)',
+                color: 'var(--text-tertiary)',
+              }}>
+                {formatFileSize(video.file_size_bytes)}
+              </span>
+            </div>
+          </button>
+        )
+      })}
     </div>
   )
 }

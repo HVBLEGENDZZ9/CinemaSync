@@ -1,6 +1,6 @@
 import { useRef, useCallback, useImperativeHandle, forwardRef, useState } from 'react'
 import ReactPlayer from 'react-player'
-import { Plus } from 'lucide-react'
+import { Play, Link2 } from 'lucide-react'
 
 const VideoPlayer = forwardRef(function VideoPlayer(
   {
@@ -20,8 +20,6 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   const playerRef = useRef(null)
   const [isBuffering, setIsBuffering] = useState(false)
 
-  // react-player v3: ref gives us the underlying HTMLMediaElement
-  // Expose a stable API to parent via useImperativeHandle
   useImperativeHandle(ref, () => ({
     seekTo: (seconds) => {
       if (playerRef.current) {
@@ -46,7 +44,6 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     onBufferEnd?.()
   }, [onBufferEnd])
 
-  // react-player v3: onTimeUpdate fires native timeupdate events
   const handleTimeUpdate = useCallback(
     (e) => {
       const el = e.target
@@ -57,7 +54,6 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     [onTimeUpdate]
   )
 
-  // react-player v3: onDurationChange fires when duration is available
   const handleDurationChange = useCallback(
     (e) => {
       const el = e.target
@@ -71,31 +67,97 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   if (!url) {
     return (
       <div
-        className="w-full h-full flex flex-col items-center justify-center gap-3"
         style={{
-          backgroundColor: 'var(--bg-base)',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '20px',
+          backgroundColor: '#0a0a0a',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <Plus
-          size={32}
-          strokeWidth={1}
-          style={{ color: 'var(--text-tertiary)' }}
-        />
-        <span
-          className="text-[13px] leading-[1.6]"
-          style={{ color: 'var(--text-secondary)' }}
+        {/* Ambient background glow */}
+        <div style={{
+          position: 'absolute',
+          width: '300px',
+          height: '300px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,45,120,0.06) 0%, transparent 70%)',
+          top: '50%',
+          left: '30%',
+          transform: 'translate(-50%, -50%)',
+          pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute',
+          width: '300px',
+          height: '300px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(62,166,255,0.06) 0%, transparent 70%)',
+          top: '50%',
+          left: '70%',
+          transform: 'translate(-50%, -50%)',
+          pointerEvents: 'none',
+        }} />
+
+        {/* Icon */}
+        <div
+          style={{
+            width: '72px',
+            height: '72px',
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+          }}
         >
-          Paste a URL or choose from library
-        </span>
+          <Play
+            size={28}
+            strokeWidth={1.5}
+            style={{ color: 'var(--accent)', marginLeft: '3px' }}
+          />
+        </div>
+
+        {/* Text */}
+        <div style={{ textAlign: 'center', position: 'relative' }}>
+          <p style={{
+            fontSize: '16px',
+            fontWeight: 600,
+            color: 'var(--text-primary)',
+            marginBottom: '6px',
+          }}>
+            Ready to watch
+          </p>
+          <p style={{
+            fontSize: '13px',
+            color: 'var(--text-secondary)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            justifyContent: 'center',
+          }}>
+            <Link2 size={14} style={{ color: 'var(--blue)', flexShrink: 0 }} />
+            Paste a URL in the search bar above
+          </p>
+        </div>
       </div>
     )
   }
 
   return (
     <div
-      className="relative w-full h-full"
       style={{
-        backgroundColor: 'black',
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#000',
       }}
     >
       <ReactPlayer
@@ -124,11 +186,20 @@ const VideoPlayer = forwardRef(function VideoPlayer(
 
       {/* Buffering indicator */}
       {isBuffering && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          pointerEvents: 'none',
+        }}>
           <div
-            className="w-8 h-8 rounded-full"
             style={{
-              border: '2px solid var(--accent-dim)',
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              border: '3px solid rgba(255,45,120,0.15)',
               borderTopColor: 'var(--accent)',
               animation: 'spin 600ms linear infinite',
             }}

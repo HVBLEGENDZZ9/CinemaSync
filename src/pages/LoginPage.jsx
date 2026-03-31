@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import { PlaySquare } from 'lucide-react'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -29,25 +30,37 @@ export default function LoginPage() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: 'calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom))',
-        /* subtle radial glow top-center */
-        backgroundImage:
-          'radial-gradient(ellipse 60% 34% at 50% 0%, rgba(232,149,122,0.07) 0%, transparent 70%)',
+        overflow: 'hidden',
       }}
     >
-      {/* Ambient orb */}
+      {/* Ambient glow - pink */}
       <div
         aria-hidden
         style={{
           position: 'absolute',
-          top: '-10%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '480px',
-          height: '480px',
+          top: '-15%',
+          left: '30%',
+          width: '500px',
+          height: '500px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(232,149,122,0.08) 0%, transparent 65%)',
+          background: 'radial-gradient(circle, rgba(255,45,120,0.08) 0%, transparent 60%)',
           pointerEvents: 'none',
-          filter: 'blur(40px)',
+          filter: 'blur(60px)',
+        }}
+      />
+      {/* Ambient glow - blue */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          bottom: '-15%',
+          right: '20%',
+          width: '500px',
+          height: '500px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(62,166,255,0.06) 0%, transparent 60%)',
+          pointerEvents: 'none',
+          filter: 'blur(60px)',
         }}
       />
 
@@ -57,52 +70,42 @@ export default function LoginPage() {
         style={{
           position: 'relative',
           width: '100%',
-          maxWidth: '340px',
+          maxWidth: '360px',
           background: 'var(--bg-surface)',
           border: '1px solid var(--border)',
           borderRadius: 'var(--radius-xl)',
-          padding: '36px 28px 28px',
+          padding: '40px 32px 32px',
           boxShadow: '0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--border-soft)',
         }}
       >
-        {/* Logo mark */}
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          {/* Film icon — SVG inline */}
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '52px',
-              height: '52px',
-              borderRadius: '14px',
-              background: 'var(--accent-dim)',
-              border: '1px solid rgba(232,149,122,0.2)',
-              marginBottom: '16px',
+              width: '56px',
+              height: '56px',
+              borderRadius: '16px',
+              background: 'var(--gradient-pink-blue)',
+              marginBottom: '20px',
+              boxShadow: '0 8px 24px var(--accent-glow)',
             }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="2.5"/>
-              <line x1="7" y1="2" x2="7" y2="22"/>
-              <line x1="17" y1="2" x2="17" y2="22"/>
-              <line x1="2" y1="12" x2="22" y2="12"/>
-              <line x1="2" y1="7" x2="7" y2="7"/>
-              <line x1="17" y1="7" x2="22" y2="7"/>
-              <line x1="17" y1="17" x2="22" y2="17"/>
-              <line x1="2" y1="17" x2="7" y2="17"/>
-            </svg>
+            <PlaySquare size={26} color="#fff" fill="#fff" />
           </div>
 
           <h1
             style={{
-              fontSize: '20px',
-              fontWeight: 600,
-              letterSpacing: '-0.01em',
+              fontSize: '22px',
+              fontWeight: 700,
+              letterSpacing: '-0.02em',
               color: 'var(--text-primary)',
               marginBottom: '6px',
             }}
           >
-            Cinema Sync
+            Cinema<span style={{ color: 'var(--accent)' }}>Sync</span>
           </h1>
           <p
             style={{
@@ -116,7 +119,7 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <LoginInput
             type="text"
             value={username}
@@ -140,14 +143,14 @@ export default function LoginPage() {
             type="submit"
             disabled={submitting || !username.trim() || !password.trim()}
             style={{
-              marginTop: '6px',
+              marginTop: '8px',
               width: '100%',
-              padding: '12px',
-              borderRadius: 'var(--radius-sm)',
+              padding: '13px',
+              borderRadius: '20px',
               border: 'none',
               background: submitting || !username.trim() || !password.trim()
                 ? 'var(--bg-elevated)'
-                : 'linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%)',
+                : 'var(--accent)',
               color: submitting || !username.trim() || !password.trim()
                 ? 'var(--text-tertiary)'
                 : '#fff',
@@ -160,6 +163,9 @@ export default function LoginPage() {
               justifyContent: 'center',
               gap: '8px',
               letterSpacing: '0.01em',
+              boxShadow: submitting || !username.trim() || !password.trim()
+                ? 'none'
+                : '0 4px 16px var(--accent-glow)',
             }}
           >
             {submitting
@@ -186,7 +192,7 @@ export default function LoginPage() {
         {/* Divider hint */}
         <p
           style={{
-            marginTop: '20px',
+            marginTop: '24px',
             fontSize: '12px',
             color: 'var(--text-tertiary)',
             textAlign: 'center',
@@ -210,15 +216,16 @@ function LoginInput({ id, ...props }) {
       onBlur={() => setFocused(false)}
       style={{
         width: '100%',
-        padding: '11px 14px',
-        borderRadius: 'var(--radius-sm)',
-        border: `1px solid ${focused ? 'rgba(232,149,122,0.5)' : 'var(--border)'}`,
-        background: focused ? 'rgba(232,149,122,0.04)' : 'var(--bg-elevated)',
+        padding: '12px 16px',
+        borderRadius: '12px',
+        border: `1px solid ${focused ? 'var(--accent)' : 'var(--border)'}`,
+        background: focused ? 'rgba(255,45,120,0.04)' : 'var(--bg-elevated)',
         color: 'var(--text-primary)',
         fontSize: '14px',
         outline: 'none',
-        transition: 'border-color 180ms, background 180ms',
+        transition: 'border-color 180ms, background 180ms, box-shadow 180ms',
         WebkitAppearance: 'none',
+        boxShadow: focused ? '0 0 0 3px rgba(255,45,120,0.08)' : 'none',
       }}
     />
   )

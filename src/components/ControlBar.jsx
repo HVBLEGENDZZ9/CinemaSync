@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react'
+import { Play, Pause, Volume2, VolumeX, Maximize, SkipForward, SkipBack } from 'lucide-react'
 import { formatTime } from '../lib/sync'
 
 export default function ControlBar({
@@ -15,6 +15,7 @@ export default function ControlBar({
   const seekRef = useRef(null)
   const [isSeeking, setIsSeeking] = useState(false)
   const [localSeekValue, setLocalSeekValue] = useState(0)
+  const [hoverProgress, setHoverProgress] = useState(false)
 
   const seekValue = isSeeking ? localSeekValue : (currentTime || 0)
   const fillPercent = duration > 0 ? (seekValue / duration) * 100 : 0
@@ -27,27 +28,41 @@ export default function ControlBar({
     onSeek(time)
   }, [onSeek])
 
+  const skipForward = useCallback(() => {
+    const newTime = Math.min((currentTime || 0) + 10, duration || 0)
+    onSeek(newTime)
+  }, [currentTime, duration, onSeek])
+
+  const skipBack = useCallback(() => {
+    const newTime = Math.max((currentTime || 0) - 10, 0)
+    onSeek(newTime)
+  }, [currentTime, onSeek])
+
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '6px',
-        maxWidth: '800px',
+        maxWidth: '1280px',
         margin: '0 auto',
         width: '100%',
-        padding: '0 24px 20px',
+        padding: '0 16px',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
-      {/* ── Seek Bar ── */}
-      <div 
-        style={{ 
-          height: '24px', 
-          display: 'flex', 
-          alignItems: 'center',
+      {/* ── YouTube-style Progress Bar ── */}
+      <div
+        style={{
+          height: hoverProgress ? '6px' : '3px',
+          display: 'flex',
+          alignItems: 'flex-end',
           cursor: 'pointer',
-          position: 'relative'
+          position: 'relative',
+          borderRadius: '2px',
+          transition: 'height 150ms ease',
+          marginTop: '-1px',
         }}
+        onMouseEnter={() => setHoverProgress(true)}
+        onMouseLeave={() => setHoverProgress(false)}
       >
         <input
           ref={seekRef}
@@ -71,33 +86,74 @@ export default function ControlBar({
             zIndex: 2,
             position: 'absolute',
             inset: 0,
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
           className="cs-seek-input"
         />
-        {/* Custom Track */}
-        <div style={{ position: 'absolute', left: 0, right: 0, height: '4px', background: 'rgba(255,255,255,0.2)', borderRadius: '2px', overflow: 'hidden', pointerEvents: 'none' }}>
-           <div style={{ width: `${fillPercent}%`, height: '100%', background: 'var(--accent)', borderRadius: '2px', transition: isSeeking ? 'none' : 'width 100ms linear' }} />
+        {/* Track background */}
+        <div style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: '100%',
+          background: 'rgba(255,255,255,0.15)',
+          borderRadius: '2px',
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        }}>
+          {/* Fill */}
+          <div style={{
+            width: `${fillPercent}%`,
+            height: '100%',
+            background: 'var(--accent)',
+            borderRadius: '2px',
+            transition: isSeeking ? 'none' : 'width 100ms linear',
+          }} />
         </div>
-        {/* Custom Thumb (handled via CSS class cs-seek-input in index.css for exact positioning) */}
       </div>
 
       {/* ── Controls Row ── */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
-        
-        {/* Left: Play/Pause & Time */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <CtrlBtn onClick={onPlayPause} aria-label={isPlaying ? 'Pause' : 'Play'} primary>
-            {isPlaying ? <Pause size={22} fill="#0d0f14" color="#0d0f14" /> : <Play size={22} fill="#0d0f14" color="#0d0f14" style={{ marginLeft: '4px' }} />}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '8px 0 12px',
+      }}>
+
+        {/* Left: Play/Pause, Skip, Time */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <CtrlBtn onClick={skipBack} aria-label="Back 10s" title="Back 10s">
+            <SkipBack size={18} />
           </CtrlBtn>
 
-          <span style={{ fontSize: '14px', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.85)', letterSpacing: '0.5px' }}>
-            {formatTime(seekValue)} <span style={{ opacity: 0.5, margin: '0 4px' }}>/</span> {formatTime(duration)}
+          <CtrlBtn onClick={onPlayPause} aria-label={isPlaying ? 'Pause' : 'Play'} size="lg">
+            {isPlaying
+              ? <Pause size={22} fill="#fff" color="#fff" />
+              : <Play size={22} fill="#fff" color="#fff" style={{ marginLeft: '2px' }} />
+            }
+          </CtrlBtn>
+
+          <CtrlBtn onClick={skipForward} aria-label="Forward 10s" title="Forward 10s">
+            <SkipForward size={18} />
+          </CtrlBtn>
+
+          <span style={{
+            fontSize: '13px',
+            fontFamily: 'var(--font-mono)',
+            color: 'rgba(255,255,255,0.75)',
+            letterSpacing: '0.3px',
+            marginLeft: '8px',
+            whiteSpace: 'nowrap',
+          }}>
+            {formatTime(seekValue)}
+            <span style={{ opacity: 0.4, margin: '0 4px' }}>/</span>
+            {formatTime(duration)}
           </span>
         </div>
 
         {/* Right: Mute & Fullscreen */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
           <CtrlBtn onClick={onToggleMute} aria-label={muted ? 'Unmute' : 'Mute'}>
             {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
           </CtrlBtn>
@@ -111,8 +167,9 @@ export default function ControlBar({
   )
 }
 
-function CtrlBtn({ children, primary, ...props }) {
+function CtrlBtn({ children, size: btnSize, ...props }) {
   const [hovered, setHovered] = useState(false)
+  const isLg = btnSize === 'lg'
   return (
     <button
       {...props}
@@ -122,17 +179,14 @@ function CtrlBtn({ children, primary, ...props }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: primary ? '48px' : '40px',
-        height: primary ? '48px' : '40px',
+        width: isLg ? '42px' : '36px',
+        height: isLg ? '42px' : '36px',
         borderRadius: '50%',
         border: 'none',
-        background: primary 
-          ? hovered ? '#fff' : 'var(--text-primary)'
-          : hovered ? 'rgba(255,255,255,0.15)' : 'transparent',
-        color: primary ? '#000' : '#fff',
+        background: hovered ? 'rgba(255,255,255,0.1)' : 'transparent',
+        color: '#fff',
         cursor: 'pointer',
-        transition: 'all 200ms cubic-bezier(0.16, 1, 0.3, 1)',
-        transform: hovered && primary ? 'scale(1.05)' : 'scale(1)',
+        transition: 'all 150ms ease',
         flexShrink: 0,
       }}
     >
