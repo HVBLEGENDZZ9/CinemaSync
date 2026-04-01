@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useRoom } from '../hooks/useRoom'
 import { useSync } from '../hooks/useSync'
 import { supabase } from '../lib/supabase'
-import { EVENTS, computePlayPosition, persistRoomState } from '../lib/sync'
+import { EVENTS, computePlayPosition, persistRoomState, debounce } from '../lib/sync'
 import VideoPlayer from '../components/VideoPlayer'
 import ControlBar from '../components/ControlBar'
 import Library from '../components/Library'
@@ -19,6 +19,10 @@ export default function RoomPage() {
   const isSyncingRef = useRef(false)
   const partnerBufferingRef = useRef(false)
   const hasCaughtUpRef = useRef(false)
+  const bufferTimerRef = useRef(null)
+  const debouncedPersistSeekRef = useRef(
+    debounce((sb, rid, state) => persistRoomState(sb, rid, state), 500)
+  )
 
   const [videoUrl, setVideoUrl] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -66,7 +70,7 @@ export default function RoomPage() {
         break
     }
 
-    setTimeout(() => { isSyncingRef.current = false }, 100)
+    setTimeout(() => { isSyncingRef.current = false }, 50)
   }, [])
 
   const { broadcast, broadcastSeek, partnerPresence } = useSync({ onEvent: handleSyncEvent })
@@ -84,7 +88,7 @@ export default function RoomPage() {
         playerRef.current?.seekTo(catchUp.position)
         setIsPlaying(catchUp.isPlaying)
         isSyncingRef.current = false
-      }, 500)
+      }, 200)
     })
   }, [room, getCatchUpState])
 
@@ -115,8 +119,8 @@ export default function RoomPage() {
     playerRef.current?.seekTo(time)
     setCurrentTime(time)
     broadcastSeek({ videoTimestamp: time, isPlaying })
-    persistRoomState(supabase, roomId, { currentUrl: videoUrl, isPlaying, lastTimestamp: time })
-    setTimeout(() => { isSyncingRef.current = false }, 100)
+    debouncedPersistSeekRef.current(supabase, roomId, { currentUrl: videoUrl, isPlaying, lastTimestamp: time })
+    setTimeout(() => { isSyncingRef.current = false }, 50)
   }, [broadcastSeek, isPlaying, roomId, videoUrl])
 
   const handleLoadUrl = useCallback((url) => {
@@ -298,8 +302,19 @@ export default function RoomPage() {
               onPause={handlePause}
               onTimeUpdate={(state) => setCurrentTime(state.playedSeconds)}
               onDuration={(d) => setDuration(d)}
-              onBuffer={() => !isSyncingRef.current && broadcast(EVENTS.BUFFER_START, { videoTimestamp: playerRef.current?.getCurrentTime() ?? 0 })}
-              onBufferEnd={() => !isSyncingRef.current && broadcast(EVENTS.BUFFER_END, {})}
+              onBuffer={() => {
+                if (isSyncingRef.current) return
+                clearTimeout(bufferTimerRef.current)
+                bufferTimerRef.current = setTimeout(() => {
+                  broadcast(EVENTS.BUFFER_START, { videoTimestamp: playerRef.current?.getCurrentTime() ?? 0 })
+                }, 300)
+              }}
+              onBufferEnd={() => {
+                clearTimeout(bufferTimerRef.current)
+                if (!isSyncingRef.current && partnerBufferingRef.current === false) {
+                  broadcast(EVENTS.BUFFER_END, {})
+                }
+              }}
               onReady={() => {}}
             />
           </div>

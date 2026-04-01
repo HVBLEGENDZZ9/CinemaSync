@@ -25,7 +25,7 @@ export function useSync({ onEvent }) {
           serverTimestamp: Date.now(),
         },
       })
-    }, 300)
+    }, 50)
 
     return () => {
       broadcastSeekRef.current?.cancel()
@@ -67,7 +67,8 @@ export function useSync({ onEvent }) {
 
     channel.subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { session } } = await supabase.auth.getSession()
+        const user = session?.user
         if (user) {
           channel.track({
             user_id: user.id,
