@@ -1,7 +1,7 @@
-# BACKEND AGENT — CinemaSync
+# BACKEND AGENT — Room uru8
 ## Instructions for Claude Code
 
-You are setting up the entire backend infrastructure for a private two-person synchronized video watching platform called **CinemaSync**. There is no traditional Express/Node server. The backend is entirely composed of Supabase (Auth, Postgres, Realtime, Edge Functions) and Cloudflare R2 (file storage). Everything must operate within free tiers.
+You are setting up the entire backend infrastructure for a private two-person synchronized video watching platform called **Room uru8**. There is no traditional Express/Node server. The backend is entirely composed of Supabase (Auth, Postgres, Realtime, Edge Functions) and Cloudflare R2 (file storage). Everything must operate within free tiers.
 
 ---
 
@@ -39,7 +39,7 @@ This extends Supabase's built-in `auth.users` table with a display username.
 - `username` — TEXT, unique, not null
 - `created_at` — TIMESTAMPTZ, default `now()`
 
-After creating the table, create a Postgres **function + trigger** that automatically inserts into `profiles` whenever a new user is created in `auth.users`. The trigger fires `AFTER INSERT ON auth.users` and inserts the new user's `id`. The `username` field should be populated from the user's email prefix (everything before `@`) since the frontend stores usernames as `{username}@cinemasync.local`.
+After creating the table, create a Postgres **function + trigger** that automatically inserts into `profiles` whenever a new user is created in `auth.users`. The trigger fires `AFTER INSERT ON auth.users` and inserts the new user's `id`. The `username` field should be populated from the user's email prefix (everything before `@`) since the frontend stores usernames as `{username}@room-uru8.local`.
 
 ### Table: `rooms`
 
@@ -112,14 +112,14 @@ The room state persistence (for late-join) is handled by the frontend calling a 
 
 1. Log into Cloudflare dashboard
 2. Navigate to R2 Object Storage
-3. Create a new bucket named `cinemasync-library`
+3. Create a new bucket named `room-uru8-library`
 4. Under the bucket settings, enable **Public Access** via a custom domain or the default `r2.dev` subdomain. This allows the frontend to stream video directly from R2 without authentication headers. Note the public bucket URL — it will look like `https://pub-xxxx.r2.dev` or your custom domain.
 
 ### Create R2 API Token
 
 1. In Cloudflare R2 settings, create an API Token with:
    - Permission: Object Read & Write
-   - Scope: Specific bucket — `cinemasync-library`
+   - Scope: Specific bucket — `room-uru8-library`
 2. Note the following credentials: Account ID, Access Key ID, Secret Access Key
 
 These credentials are **never exposed to the frontend**. They live only in Supabase Edge Function secrets.
@@ -155,7 +155,7 @@ Edge Functions are TypeScript serverless functions deployed via `supabase functi
 - `R2_ACCOUNT_ID`
 - `R2_ACCESS_KEY_ID`
 - `R2_SECRET_ACCESS_KEY`
-- `R2_BUCKET_NAME` (value: `cinemasync-library`)
+- `R2_BUCKET_NAME` (value: `room-uru8-library`)
 - `R2_PUBLIC_BUCKET_URL` (the public base URL of the R2 bucket)
 - `SUPABASE_SERVICE_ROLE_KEY` (already available in Edge Functions as a built-in secret)
 
@@ -194,7 +194,7 @@ Run the following commands using the Supabase CLI after setting up R2:
 supabase secrets set R2_ACCOUNT_ID=<value>
 supabase secrets set R2_ACCESS_KEY_ID=<value>
 supabase secrets set R2_SECRET_ACCESS_KEY=<value>
-supabase secrets set R2_BUCKET_NAME=cinemasync-library
+supabase secrets set R2_BUCKET_NAME=room-uru8-library
 supabase secrets set R2_PUBLIC_BUCKET_URL=<value>
 ```
 
@@ -220,8 +220,8 @@ Since this is a private two-person app, user accounts are not self-registered �
 
 1. Use the Supabase dashboard → Authentication → Users → "Invite user"
 2. Create exactly two accounts:
-   - `{username1}@cinemasync.local` with a strong password
-   - `{username2}@cinemasync.local` with a strong password
+   - `{username1}@room-uru8.local` with a strong password
+   - `{username2}@room-uru8.local` with a strong password
 3. The trigger on `auth.users` will automatically create their `profiles` rows
 
 Do not enable user sign-up in the Auth settings. Under Authentication → Settings, disable "Enable Sign Ups" so no one can create accounts via the API. Only manually invited users (created from the dashboard) can exist.

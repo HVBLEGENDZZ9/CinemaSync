@@ -1,5 +1,5 @@
 /**
- * CinemaSync — Realtime sync protocol
+ * Room uru8 — Realtime sync protocol
  *
  * All sync events are broadcast on the `room:main` Supabase Realtime channel.
  * The core principle: never trust client clocks. Use serverTimestamp offsets.

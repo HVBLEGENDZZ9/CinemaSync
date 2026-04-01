@@ -213,7 +213,7 @@ export default function RoomPage() {
             color: 'var(--ast-ivory)',
             letterSpacing: '-0.02em',
           }}>
-            CinemaSync
+            Room uru8
           </span>
         </div>
 

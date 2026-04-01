@@ -1,4 +1,4 @@
-# CinemaSync Backend Deployment Guide
+# Room uru8 Backend Deployment Guide
 
 Complete step-by-step deployment for the Supabase + Cloudflare R2 backend infrastructure.
 
@@ -17,7 +17,7 @@ Complete step-by-step deployment for the Supabase + Cloudflare R2 backend infras
 
 1. Go to [supabase.com/dashboard](https://supabase.com/dashboard)
 2. Click **New project**
-3. Choose your organization, name the project (e.g., `cinemasync`), set a strong database password, and pick the region closest to both users
+3. Choose your organization, name the project (e.g., `room-uru8`), set a strong database password, and pick the region closest to both users
 4. Wait for the project to finish provisioning
 5. Note down from **Settings > API**:
    - `Project URL` — this becomes `VITE_SUPABASE_URL`
@@ -98,7 +98,7 @@ This is a private two-person app. No one should be able to self-register.
 1. Log into [Cloudflare Dashboard](https://dash.cloudflare.com)
 2. Navigate to **R2 Object Storage** in the sidebar
 3. Click **Create bucket**
-4. Name it `cinemasync-library`
+4. Name it `room-uru8-library`
 5. Pick a location hint closest to both users
 6. After creation, go to the bucket's **Settings > Public Access**
 7. Enable public access via the `r2.dev` subdomain (or configure a custom domain)
@@ -110,7 +110,7 @@ This is a private two-person app. No one should be able to self-register.
 2. Click **Create API token**
 3. Configure:
    - Permission: **Object Read & Write**
-   - Scope: **Apply to specific bucket only** — select `cinemasync-library`
+   - Scope: **Apply to specific bucket only** — select `room-uru8-library`
 4. Click **Create API Token**
 5. Note down:
    - **Account ID** (visible in the R2 overview or URL bar)
@@ -138,12 +138,12 @@ Set all secrets:
 supabase secrets set R2_ACCOUNT_ID=<your-cloudflare-account-id>
 supabase secrets set R2_ACCESS_KEY_ID=<your-r2-access-key-id>
 supabase secrets set R2_SECRET_ACCESS_KEY=<your-r2-secret-access-key>
-supabase secrets set R2_BUCKET_NAME=cinemasync-library
+supabase secrets set R2_BUCKET_NAME=room-uru8-library
 supabase secrets set R2_PUBLIC_BUCKET_URL=<your-public-bucket-url>
 supabase secrets set ALLOWED_ORIGIN=<your-vercel-frontend-url>
 ```
 
-Replace `<your-vercel-frontend-url>` with the actual deployed frontend URL (e.g., `https://cinemasync.vercel.app`). During development, you can temporarily set this to `http://localhost:5173`.
+Replace `<your-vercel-frontend-url>` with the actual deployed frontend URL (e.g., `https://room-uru8.vercel.app`). During development, you can temporarily set this to `http://localhost:5173`.
 
 Note: `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are automatically available in Edge Functions — you do not need to set them manually.
 
@@ -191,7 +191,7 @@ curl -X POST '<SUPABASE_URL>/functions/v1/get-upload-url' \
 Expected response (200):
 ```json
 {
-  "uploadUrl": "https://<account-id>.r2.cloudflarestorage.com/cinemasync-library/uploads/<uuid>/test_video.mp4?X-Amz-...",
+  "uploadUrl": "https://<account-id>.r2.cloudflarestorage.com/room-uru8-library/uploads/<uuid>/test_video.mp4?X-Amz-...",
   "publicUrl": "https://pub-xxxx.r2.dev/uploads/<uuid>/test_video.mp4"
 }
 ```

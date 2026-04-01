@@ -96,7 +96,7 @@ export default function LoginPage() {
             textAlign: 'center',
           }}
         >
-          CinemaSync
+          Room uru8
         </h1>
 
         {/* Gold separator line */}
