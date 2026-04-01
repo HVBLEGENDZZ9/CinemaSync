@@ -159,59 +159,57 @@ export default function RoomPage() {
   }, [handleLoadUrl])
 
   return (
-    <div id="cs-room-root" className="bg-background font-body text-on-background selection:bg-primary selection:text-on-primary overflow-hidden min-h-screen">
+    <div id="cs-room-root" className="bg-background font-body text-on-background selection:bg-primary/30 selection:text-on-surface overflow-hidden min-h-screen">
       {/* Top Navigation */}
-      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-4 md:py-6 bg-[#131313]/70 backdrop-blur-xl">
+      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 h-14 md:h-[72px] bg-[#131313]/80 backdrop-blur-xl" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="flex items-center gap-2 pl-12 md:pl-0">
-          <span className="text-xl md:text-2xl font-bold tracking-tighter text-[#e5e2e1] font-headline">CinemaSync</span>
+          <span className="text-lg md:text-2xl font-bold tracking-tighter text-on-surface font-headline">CinemaSync</span>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="hidden sm:block">
-            <PresenceIndicator partner={partnerPresence} />
-          </div>
+        <div className="flex items-center gap-3 md:gap-4">
+          <PresenceIndicator partner={partnerPresence} />
           {/* User logout */}
-          <button 
-            onClick={logout} 
+          <button
+            onClick={logout}
             title={`Logout (${username})`}
-            className="w-8 h-8 rounded-full bg-primary-container border border-outline-variant/20 flex items-center justify-center text-primary font-bold text-xs hover:bg-surface-container-highest transition-colors uppercase"
+            className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-primary-container border border-outline-variant/15 flex items-center justify-center text-primary font-headline font-bold text-xs hover:bg-surface-container-highest transition-colors duration-300 uppercase"
           >
             {username ? username.charAt(0) : '?'}
           </button>
         </div>
       </nav>
 
-      {/* Side Navigation */}
-      <aside className="fixed left-0 top-0 h-full flex flex-col p-4 md:p-6 z-40 bg-[#131313] border-r border-[#444748]/15 shadow-[40px_0_60px_rgba(14,14,14,0.04)] w-16 md:w-20 hover:w-64 transition-all duration-500 group overflow-hidden">
-        <div className="mb-12 flex items-center gap-4 mt-2 md:mt-0">
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0">
+      {/* Side Navigation - hidden on mobile */}
+      <aside className="hidden md:flex fixed left-0 top-0 h-full flex-col p-6 z-40 bg-[#131313] border-r border-outline-variant/10 w-20 hover:w-64 transition-all duration-500 group overflow-hidden" style={{ boxShadow: '40px 0 60px rgba(14,14,14,0.04)' }}>
+        <div className="mb-12 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center shrink-0">
             <Film size={20} className="text-primary" />
           </div>
           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <h2 className="text-lg md:text-xl font-black text-primary font-headline leading-none">CinemaSync</h2>
+            <h2 className="text-xl font-black text-primary font-headline leading-none">CinemaSync</h2>
             <p className="text-[10px] text-on-surface-variant font-body uppercase tracking-wider mt-1">Private Session</p>
           </div>
         </div>
-        <nav className="flex flex-col gap-4 md:gap-8 flex-1">
-          <button onClick={() => setSidebarOpen(true)} className="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container hover:text-on-surface p-2 md:p-3 rounded-lg transition-all duration-300 w-full text-left">
+        <nav className="flex flex-col gap-6 flex-1">
+          <button onClick={() => setSidebarOpen(true)} className="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container hover:text-on-surface p-3 rounded-lg transition-all duration-300 w-full text-left">
             <LibraryIcon size={20} className="shrink-0" />
-            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-body uppercase tracking-[0.1rem] text-xs md:text-sm whitespace-nowrap">Gallery</span>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-body uppercase tracking-[0.1rem] text-sm whitespace-nowrap">Gallery</span>
           </button>
-          <button className="flex items-center gap-4 text-primary border-r-2 border-primary bg-surface-container p-2 md:p-3 rounded-lg transition-all duration-300 w-full text-left">
+          <button className="flex items-center gap-4 text-primary border-r-2 border-primary bg-surface-container p-3 rounded-lg transition-all duration-300 w-full text-left">
             <PlaySquare size={20} className="shrink-0" />
-            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-body uppercase tracking-[0.1rem] text-xs md:text-sm whitespace-nowrap">Sync</span>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-body uppercase tracking-[0.1rem] text-sm whitespace-nowrap">Sync</span>
           </button>
         </nav>
-        <button onClick={() => setShowUpload(true)} className="mt-auto bg-primary text-on-primary font-bold py-3 md:py-4 rounded-lg flex items-center justify-center gap-2 group-hover:px-6 transition-all shrink-0">
+        <button onClick={() => setShowUpload(true)} className="mt-auto bg-primary text-on-primary font-bold py-4 rounded-lg flex items-center justify-center gap-2 group-hover:px-6 transition-all duration-300 shrink-0">
           <Upload size={20} />
           <span className="hidden group-hover:block font-body uppercase tracking-[0.1rem] text-xs whitespace-nowrap">Add Video</span>
         </button>
       </aside>
 
       {/* Main Content */}
-      <main className="ml-16 md:ml-20 min-h-screen flex flex-col items-center justify-center p-4 md:p-8 lg:p-20 pt-24 md:pt-20 relative bg-surface-container-lowest">
-        
+      <main className="md:ml-20 min-h-screen flex flex-col items-center p-4 md:p-8 lg:p-12 xl:p-20 relative bg-surface-container-lowest" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 72px)' }}>
+
         {/* Video Canvas Section */}
-        <div className="relative w-full max-w-7xl aspect-video rounded-xl overflow-hidden shadow-2xl group/player video-container bg-black border border-outline-variant/10">
+        <div className="relative w-full max-w-7xl aspect-video rounded-none md:rounded-xl overflow-hidden shadow-2xl group/player video-container bg-black border-0 md:border md:border-outline-variant/10">
           <div className="absolute inset-0 z-0">
             <VideoPlayer
               ref={playerRef}
@@ -244,29 +242,32 @@ export default function RoomPage() {
         </div>
 
         {/* URL Input Area */}
-        <div className="mt-8 md:mt-12 w-full max-w-2xl flex flex-col items-center gap-6 md:gap-8 z-10">
+        <div className="mt-6 md:mt-10 w-full max-w-2xl flex flex-col items-center gap-5 md:gap-8 z-10 px-0 md:px-0">
+          {/* URL Input */}
           <div className="w-full relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/10 to-transparent rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/10 to-transparent rounded-lg blur opacity-0 group-hover:opacity-60 transition-opacity duration-1000"></div>
             <div className="relative bg-surface-container-low border border-outline-variant/10 rounded-lg p-1 flex items-center gap-2 focus-within:bg-surface-container transition-all duration-500">
-              <Search className="text-on-surface-variant ml-4 shrink-0" size={18} />
-              <input 
-                className="w-full bg-transparent border-none text-on-surface placeholder:text-on-tertiary-container focus:outline-none focus:ring-0 font-body text-sm py-3 md:py-4 px-2" 
-                placeholder="Paste video URL to sync..." 
+              <Search className="text-on-surface-variant ml-3 md:ml-4 shrink-0" size={16} />
+              <input
+                className="w-full bg-transparent border-none text-on-surface placeholder:text-on-tertiary-container focus:outline-none focus:ring-0 font-body text-sm py-3 md:py-4 px-1 md:px-2"
+                placeholder="Paste video URL to sync..."
                 type="text"
                 value={urlBarValue}
                 onChange={(e) => setUrlBarValue(e.target.value)}
                 onKeyDown={handleUrlKeyDown}
                 onPaste={handleUrlPaste}
+                style={{ fontSize: '16px' }} /* Prevents iOS zoom on focus */
               />
-              <button onClick={handleUrlSubmit} className="bg-primary text-on-primary px-4 md:px-6 py-2 md:py-3 rounded-md font-label text-xs uppercase tracking-[0.15rem] font-bold hover:brightness-110 transition-all active:scale-95 shrink-0">
+              <button onClick={handleUrlSubmit} className="bg-primary text-on-primary px-5 md:px-6 py-2.5 md:py-3 rounded-md font-label text-xs uppercase tracking-[0.12rem] font-bold hover:bg-secondary transition-all duration-300 active:scale-95 shrink-0">
                 Load
               </button>
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-2 text-center mt-2 md:mt-4">
-            <h1 className="text-2xl md:text-3xl font-light font-headline tracking-tight text-on-surface/80">The Midnight Gallery</h1>
-            <p className="text-[10px] md:text-xs font-body text-on-tertiary-container uppercase tracking-[0.2rem]">
+          {/* Info section */}
+          <div className="flex flex-col items-center gap-2 text-center">
+            <h1 className="text-xl md:text-3xl font-light font-headline tracking-tight text-on-surface/80">The Midnight Gallery</h1>
+            <p className="text-[10px] md:text-xs font-label text-on-tertiary-container uppercase tracking-[0.2rem]">
               Watching with <span className="text-secondary">{partnerPresence ? partnerPresence.username : 'Yourself'}</span>
             </p>
           </div>
@@ -275,6 +276,22 @@ export default function RoomPage() {
         {/* Cinematic Scrim */}
         <div className="fixed bottom-0 left-0 w-full h-32 scrim-bottom pointer-events-none z-0"></div>
       </main>
+
+      {/* Mobile Bottom Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-6 pt-2 bg-[#131313]/80 backdrop-blur-xl border-t border-outline-variant/10" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)' }}>
+        <button onClick={() => setSidebarOpen(true)} className="flex flex-col items-center justify-center py-2 px-3 text-on-surface-variant active:scale-90 transition-transform">
+          <LibraryIcon size={20} />
+          <span className="font-label text-[10px] uppercase tracking-wide mt-1">Gallery</span>
+        </button>
+        <button className="flex flex-col items-center justify-center py-2 px-3 text-primary">
+          <PlaySquare size={20} />
+          <span className="font-label text-[10px] uppercase tracking-wide mt-1">Sync</span>
+        </button>
+        <button onClick={() => setShowUpload(true)} className="flex flex-col items-center justify-center py-2 px-3 text-on-surface-variant active:scale-90 transition-transform">
+          <Upload size={20} />
+          <span className="font-label text-[10px] uppercase tracking-wide mt-1">Upload</span>
+        </button>
+      </nav>
 
       <SidebarDrawer
         isOpen={sidebarOpen}
@@ -304,14 +321,15 @@ function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpl
           inset: 0,
           background: 'rgba(0,0,0,0.65)',
           backdropFilter: 'blur(6px)',
+          WebkitBackdropFilter: 'blur(6px)',
           opacity: isOpen ? 1 : 0,
           pointerEvents: isOpen ? 'auto' : 'none',
-          transition: 'opacity 300ms ease',
+          transition: 'opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)',
           zIndex: 55,
         }}
       />
 
-      {/* Drawer - from right side like YouTube */}
+      {/* Drawer - from right side */}
       <aside
         className="yt-sidebar"
         style={{
@@ -323,11 +341,11 @@ function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpl
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderBottom: '1px solid var(--border)',
+          borderBottom: '1px solid rgba(68, 71, 72, 0.15)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Film size={18} style={{ color: 'var(--accent)' }} />
-            <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#fff' }}>Library</h2>
+            <Film size={18} style={{ color: '#e9c349' }} />
+            <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#e5e2e1', fontFamily: 'Manrope, sans-serif' }}>Library</h2>
           </div>
           <button
             onClick={onClose}
@@ -337,20 +355,20 @@ function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpl
               justifyContent: 'center',
               width: '32px',
               height: '32px',
-              borderRadius: '50%',
+              borderRadius: '8px',
               background: 'transparent',
               border: 'none',
-              color: 'rgba(255,255,255,0.5)',
+              color: '#7e7d7d',
               cursor: 'pointer',
-              transition: 'all 150ms',
+              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--bg-elevated)'
-              e.currentTarget.style.color = '#fff'
+              e.currentTarget.style.background = '#2a2a2a'
+              e.currentTarget.style.color = '#e5e2e1'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent'
-              e.currentTarget.style.color = 'rgba(255,255,255,0.5)'
+              e.currentTarget.style.color = '#7e7d7d'
             }}
           >
             <X size={18} />
@@ -361,7 +379,7 @@ function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpl
           <Library videos={library} activeUrl={activeUrl} onSelect={onSelectUrl} onDelete={onDelete} onRename={onRename} />
         </div>
 
-        <div style={{ padding: '16px 20px calc(20px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)' }}>
+        <div style={{ padding: '16px 20px calc(20px + env(safe-area-inset-bottom))', borderTop: '1px solid rgba(68, 71, 72, 0.15)' }}>
           <button
             onClick={onUpload}
             style={{
@@ -370,23 +388,25 @@ function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpl
               alignItems: 'center',
               justifyContent: 'center',
               gap: '10px',
-              padding: '12px',
-              borderRadius: '20px',
+              padding: '14px',
+              borderRadius: '10px',
               border: 'none',
-              background: 'var(--accent)',
-              color: '#fff',
-              fontWeight: 600,
-              fontSize: '14px',
+              background: '#e9c349',
+              color: '#3c2f00',
+              fontWeight: 700,
+              fontSize: '13px',
+              fontFamily: 'Manrope, sans-serif',
               cursor: 'pointer',
-              transition: 'all 200ms',
-              boxShadow: '0 4px 15px var(--accent-glow)',
+              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+              letterSpacing: '0.02em',
+              boxShadow: '0 4px 20px rgba(233, 195, 73, 0.15)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--accent-hover)'
+              e.currentTarget.style.background = '#ffdf9e'
               e.currentTarget.style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'var(--accent)'
+              e.currentTarget.style.background = '#e9c349'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >

@@ -1,6 +1,6 @@
 import { useRef, useCallback, useImperativeHandle, forwardRef, useState } from 'react'
 import ReactPlayer from 'react-player'
-import { Play, Link2 } from 'lucide-react'
+import { Play, Link2, Film } from 'lucide-react'
 
 const VideoPlayer = forwardRef(function VideoPlayer(
   {
@@ -74,32 +74,21 @@ const VideoPlayer = forwardRef(function VideoPlayer(
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '20px',
-          backgroundColor: '#0a0a0a',
+          gap: '24px',
+          backgroundColor: '#0e0e0e',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        {/* Ambient background glow */}
+        {/* Ambient gold glow */}
         <div style={{
           position: 'absolute',
-          width: '300px',
-          height: '300px',
+          width: '400px',
+          height: '400px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,45,120,0.06) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(233,195,73,0.04) 0%, transparent 70%)',
           top: '50%',
-          left: '30%',
-          transform: 'translate(-50%, -50%)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute',
-          width: '300px',
-          height: '300px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(62,166,255,0.06) 0%, transparent 70%)',
-          top: '50%',
-          left: '70%',
+          left: '50%',
           transform: 'translate(-50%, -50%)',
           pointerEvents: 'none',
         }} />
@@ -107,44 +96,48 @@ const VideoPlayer = forwardRef(function VideoPlayer(
         {/* Icon */}
         <div
           style={{
-            width: '72px',
-            height: '72px',
+            width: '80px',
+            height: '80px',
             borderRadius: '50%',
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'rgba(233,195,73,0.06)',
+            border: '1px solid rgba(233,195,73,0.12)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             position: 'relative',
           }}
         >
-          <Play
-            size={28}
+          <Film
+            size={30}
             strokeWidth={1.5}
-            style={{ color: 'var(--accent)', marginLeft: '3px' }}
+            style={{ color: '#e9c349' }}
           />
         </div>
 
         {/* Text */}
         <div style={{ textAlign: 'center', position: 'relative' }}>
           <p style={{
-            fontSize: '16px',
-            fontWeight: 600,
-            color: 'var(--text-primary)',
-            marginBottom: '6px',
+            fontSize: '18px',
+            fontWeight: 300,
+            fontFamily: 'Manrope, sans-serif',
+            color: '#e5e2e1',
+            marginBottom: '8px',
+            letterSpacing: '-0.02em',
           }}>
             Ready to watch
           </p>
           <p style={{
-            fontSize: '13px',
-            color: 'var(--text-secondary)',
+            fontSize: '12px',
+            color: '#c4c7c7',
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
             justifyContent: 'center',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
           }}>
-            <Link2 size={14} style={{ color: 'var(--blue)', flexShrink: 0 }} />
-            Paste a URL in the search bar above
+            <Link2 size={13} style={{ color: '#e9c349', flexShrink: 0 }} />
+            Paste a URL below to begin
           </p>
         </div>
       </div>
@@ -199,8 +192,8 @@ const VideoPlayer = forwardRef(function VideoPlayer(
               width: '48px',
               height: '48px',
               borderRadius: '50%',
-              border: '3px solid rgba(255,45,120,0.15)',
-              borderTopColor: 'var(--accent)',
+              border: '3px solid rgba(233,195,73,0.15)',
+              borderTopColor: '#e9c349',
               animation: 'spin 600ms linear infinite',
             }}
           />

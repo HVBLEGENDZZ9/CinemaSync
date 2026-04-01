@@ -95,7 +95,7 @@ function VideoThumbnail({ url, isActive }) {
       height: '100%',
       borderRadius: '6px',
       background: isActive
-        ? 'var(--gradient-pink-blue)'
+        ? 'linear-gradient(135deg, #e9c349 0%, #ffdf9e 100%)'
         : 'linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%)',
       display: 'flex',
       alignItems: 'center',
@@ -104,8 +104,8 @@ function VideoThumbnail({ url, isActive }) {
     }}>
       <Play
         size={16}
-        fill={isActive ? '#fff' : 'var(--text-tertiary)'}
-        color={isActive ? '#fff' : 'var(--text-tertiary)'}
+        fill={isActive ? '#3c2f00' : 'var(--text-tertiary)'}
+        color={isActive ? '#3c2f00' : 'var(--text-tertiary)'}
       />
     </div>
   )
