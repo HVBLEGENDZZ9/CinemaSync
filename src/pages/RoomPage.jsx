@@ -13,7 +13,7 @@ import PresenceIndicator from '../components/PresenceIndicator'
 
 export default function RoomPage() {
   const { logout, username } = useAuth()
-  const { room, library, getCatchUpState, updateRoomUrl, roomId } = useRoom()
+  const { room, library, getCatchUpState, updateRoomUrl, deleteVideo, renameVideo, roomId } = useRoom()
 
   const playerRef = useRef(null)
   const isSyncingRef = useRef(false)
@@ -370,6 +370,8 @@ export default function RoomPage() {
         activeUrl={videoUrl}
         onSelectUrl={handleLoadUrl}
         onUpload={() => setShowUpload(true)}
+        onDelete={deleteVideo}
+        onRename={renameVideo}
       />
 
       {/* ── 4. Upload Modal ── */}
@@ -379,7 +381,7 @@ export default function RoomPage() {
 }
 
 /* ── Sidebar / Drawer Component ── */
-function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpload }) {
+function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpload, onDelete, onRename }) {
   return (
     <>
       {/* Backdrop */}
@@ -444,7 +446,7 @@ function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpl
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-          <Library videos={library} activeUrl={activeUrl} onSelect={onSelectUrl} />
+          <Library videos={library} activeUrl={activeUrl} onSelect={onSelectUrl} onDelete={onDelete} onRename={onRename} />
         </div>
 
         <div style={{ padding: '16px 20px calc(20px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--border)' }}>

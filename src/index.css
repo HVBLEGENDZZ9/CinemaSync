@@ -479,3 +479,210 @@ input, button, textarea {
 .yt-chip-blue:hover {
   background: var(--blue-hover);
 }
+
+/* ─── Library — Video Cards ─────────────────────────────────── */
+.lib-storage-bar {
+  background: var(--bg-surface);
+  border-radius: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-soft);
+}
+
+.lib-video-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 10px;
+  padding: 8px 10px;
+  transition: background-color 200ms ease, opacity 400ms ease, transform 400ms ease;
+  position: relative;
+}
+.lib-video-card:hover {
+  background: var(--bg-elevated);
+}
+.lib-video-card--active {
+  background: var(--accent-dim);
+}
+.lib-video-card--active:hover {
+  background: var(--accent-dim);
+}
+.lib-video-card--deleting {
+  opacity: 0;
+  transform: translateX(30px);
+  pointer-events: none;
+}
+
+/* Thumbnail */
+.lib-thumb {
+  width: 72px;
+  height: 42px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  background: var(--bg-surface);
+}
+@media (min-width: 480px) {
+  .lib-thumb {
+    width: 88px;
+    height: 50px;
+  }
+}
+
+.lib-thumb-playing {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+/* Mini equalizer bars */
+.lib-thumb-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+.lib-thumb-eq span {
+  display: block;
+  width: 3px;
+  border-radius: 1px;
+  background: #fff;
+  animation: eq-bounce 0.8s ease-in-out infinite;
+}
+.lib-thumb-eq span:nth-child(1) { height: 40%; animation-delay: 0s; }
+.lib-thumb-eq span:nth-child(2) { height: 70%; animation-delay: 0.15s; }
+.lib-thumb-eq span:nth-child(3) { height: 50%; animation-delay: 0.3s; }
+
+@keyframes eq-bounce {
+  0%, 100% { transform: scaleY(0.4); }
+  50%      { transform: scaleY(1.0); }
+}
+
+/* Info section */
+.lib-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lib-filename {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+  transition: color 150ms ease;
+}
+.lib-video-card--active .lib-filename {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.lib-meta {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+  line-height: 1.2;
+}
+.lib-meta-dot {
+  margin: 0 5px;
+  opacity: 0.4;
+}
+
+/* Rename Input */
+.lib-rename-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--blue);
+  border-radius: 6px;
+  padding: 4px 8px;
+  outline: none;
+  font-family: var(--font-body);
+  box-shadow: 0 0 0 2px var(--blue-dim);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.lib-rename-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-dim);
+}
+
+/* Action Buttons */
+.lib-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  flex-shrink: 0;
+}
+.lib-video-card:hover .lib-actions {
+  opacity: 1;
+}
+/* Always show on touch devices */
+@media (hover: none) {
+  .lib-actions {
+    opacity: 1;
+  }
+}
+
+.lib-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 150ms ease;
+  flex-shrink: 0;
+}
+.lib-action-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.lib-action-btn--confirm {
+  color: var(--success);
+}
+.lib-action-btn--confirm:hover {
+  background: rgba(76, 235, 107, 0.15);
+  color: var(--success);
+}
+.lib-action-btn--danger-ghost {
+  color: var(--text-tertiary);
+}
+.lib-action-btn--danger-ghost:hover {
+  background: rgba(255, 78, 78, 0.12);
+  color: var(--danger);
+}
+.lib-action-btn--danger {
+  background: rgba(255, 78, 78, 0.15);
+  color: var(--danger);
+}
+.lib-action-btn--danger:hover {
+  background: rgba(255, 78, 78, 0.25);
+}
+
+.lib-delete-confirm {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: fade-in 200ms var(--ease-out) both;
+}
