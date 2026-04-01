@@ -19,7 +19,6 @@ function formatDateShort(dateStr) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-// Generate a thumbnail from a video URL using a canvas
 function VideoThumbnail({ url, isActive }) {
   const [thumbSrc, setThumbSrc] = useState(null)
   const [failed, setFailed] = useState(false)
@@ -82,36 +81,34 @@ function VideoThumbnail({ url, isActive }) {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          borderRadius: '6px',
+          borderRadius: 'var(--radius-sm)',
         }}
       />
     )
   }
 
-  // Fallback placeholder
   return (
     <div style={{
       width: '100%',
       height: '100%',
-      borderRadius: '6px',
+      borderRadius: 'var(--radius-sm)',
       background: isActive
-        ? 'linear-gradient(135deg, #e9c349 0%, #ffdf9e 100%)'
-        : 'linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%)',
+        ? 'linear-gradient(135deg, var(--ast-gold-dark) 0%, var(--ast-gold) 100%)'
+        : 'var(--ast-elevated)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      border: isActive ? 'none' : '1px solid var(--border)',
+      border: isActive ? 'none' : '1px solid var(--ast-border-subtle)',
     }}>
       <Play
-        size={16}
-        fill={isActive ? '#3c2f00' : 'var(--text-tertiary)'}
-        color={isActive ? '#3c2f00' : 'var(--text-tertiary)'}
+        size={14}
+        fill={isActive ? 'var(--ast-on-gold)' : 'var(--ast-muted)'}
+        color={isActive ? 'var(--ast-on-gold)' : 'var(--ast-muted)'}
       />
     </div>
   )
 }
 
-// ── Storage Usage Bar ──
 function StorageBar({ videos, maxStorageBytes }) {
   const usedBytes = videos.reduce((sum, v) => sum + (v.file_size_bytes || 0), 0)
   const pct = maxStorageBytes > 0 ? Math.min((usedBytes / maxStorageBytes) * 100, 100) : 0
@@ -120,28 +117,30 @@ function StorageBar({ videos, maxStorageBytes }) {
 
   return (
     <div className="lib-storage-bar">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-        <HardDrive size={14} style={{ color: 'var(--text-tertiary)', flexShrink: 0 }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+        <HardDrive size={13} style={{ color: 'var(--ast-muted)', flexShrink: 0 }} />
         <span style={{
-          fontSize: '12px',
-          color: 'var(--text-secondary)',
-          fontWeight: 500,
+          fontSize: '11px',
+          color: 'var(--ast-silver)',
+          fontWeight: 600,
+          letterSpacing: '0.05em',
+          textTransform: 'uppercase',
         }}>
           Storage
         </span>
         <span style={{
-          fontSize: '12px',
+          fontSize: '11px',
           fontFamily: 'var(--font-mono)',
-          color: isCritical ? 'var(--danger)' : isWarning ? '#f5a623' : 'var(--text-tertiary)',
+          color: isCritical ? 'var(--ast-crimson)' : isWarning ? 'var(--ast-amber)' : 'var(--ast-muted)',
           marginLeft: 'auto',
         }}>
           {formatFileSize(usedBytes)} / {formatFileSize(maxStorageBytes)}
         </span>
       </div>
       <div style={{
-        height: '4px',
+        height: '3px',
         borderRadius: '99px',
-        background: 'var(--bg-elevated)',
+        background: 'var(--ast-elevated)',
         overflow: 'hidden',
       }}>
         <div style={{
@@ -149,26 +148,26 @@ function StorageBar({ videos, maxStorageBytes }) {
           width: `${pct}%`,
           borderRadius: '99px',
           background: isCritical
-            ? 'var(--danger)'
+            ? 'var(--ast-crimson)'
             : isWarning
-              ? 'linear-gradient(90deg, #f5a623, var(--danger))'
-              : 'var(--gradient-pink-blue)',
-          transition: 'width 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+              ? 'linear-gradient(90deg, var(--ast-amber), var(--ast-crimson))'
+              : 'linear-gradient(90deg, var(--ast-gold-dark), var(--ast-gold))',
+          transition: 'width 400ms var(--ease-luxury)',
         }} />
       </div>
       <span style={{
-        fontSize: '11px',
-        color: 'var(--text-tertiary)',
-        marginTop: '4px',
+        fontSize: '10px',
+        color: 'var(--ast-muted)',
+        marginTop: '6px',
         display: 'block',
+        fontFamily: 'var(--font-mono)',
       }}>
-        {formatFileSize(maxStorageBytes - usedBytes)} free
+        {formatFileSize(maxStorageBytes - usedBytes)} remaining
       </span>
     </div>
   )
 }
 
-// ── Single Video Card ──
 function VideoCard({ video, isActive, onSelect, onDelete, onRename }) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -179,7 +178,6 @@ function VideoCard({ video, isActive, onSelect, onDelete, onRename }) {
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus()
-      // Select name without extension
       const dotIdx = editName.lastIndexOf('.')
       inputRef.current.setSelectionRange(0, dotIdx > 0 ? dotIdx : editName.length)
     }
@@ -215,7 +213,6 @@ function VideoCard({ video, isActive, onSelect, onDelete, onRename }) {
     <div
       className={`lib-video-card ${isActive ? 'lib-video-card--active' : ''} ${isDeleting ? 'lib-video-card--deleting' : ''}`}
     >
-      {/* Thumbnail */}
       <div
         className="lib-thumb"
         onClick={() => onSelect(video.file_url)}
@@ -231,7 +228,6 @@ function VideoCard({ video, isActive, onSelect, onDelete, onRename }) {
         )}
       </div>
 
-      {/* Info */}
       <div className="lib-info">
         {isEditing ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -273,14 +269,13 @@ function VideoCard({ video, isActive, onSelect, onDelete, onRename }) {
           <span>{formatFileSize(video.file_size_bytes)}</span>
           {video.uploaded_at && (
             <>
-              <span className="lib-meta-dot">·</span>
+              <span className="lib-meta-dot">&middot;</span>
               <span>{formatDateShort(video.uploaded_at)}</span>
             </>
           )}
         </div>
       </div>
 
-      {/* Actions */}
       {!isEditing && (
         <div className="lib-actions">
           <button
@@ -324,62 +319,59 @@ function VideoCard({ video, isActive, onSelect, onDelete, onRename }) {
   )
 }
 
-// ── Main Library Component ──
 export default function Library({ videos, activeUrl, onSelect, onDelete, onRename, maxStorageBytes = 10 * 1024 * 1024 * 1024 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {/* Storage usage */}
       <StorageBar videos={videos} maxStorageBytes={maxStorageBytes} />
 
-      {/* Video count */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
         <span style={{
-          fontSize: '12px',
-          color: 'var(--text-tertiary)',
-          fontWeight: 500,
+          fontSize: '11px',
+          color: 'var(--ast-muted)',
+          fontWeight: 600,
           textTransform: 'uppercase',
-          letterSpacing: '0.05em',
+          letterSpacing: '0.08em',
         }}>
           {videos.length} video{videos.length !== 1 ? 's' : ''}
         </span>
       </div>
 
-      {/* Video list */}
       {videos.length === 0 ? (
         <div style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '40px 20px',
-          gap: '12px',
+          padding: '48px 24px',
+          gap: '16px',
         }}>
           <div style={{
             width: '56px',
             height: '56px',
             borderRadius: '50%',
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid var(--border)',
+            background: 'var(--ast-gold-dim)',
+            border: '1px solid var(--ast-border-subtle)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <Film size={22} style={{ color: 'var(--text-tertiary)' }} />
+            <Film size={22} style={{ color: 'var(--ast-muted)' }} />
           </div>
           <p style={{
             fontSize: '13px',
-            color: 'var(--text-secondary)',
+            color: 'var(--ast-silver)',
             textAlign: 'center',
+            fontWeight: 400,
           }}>
             No videos uploaded yet
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {videos.map((video) => (
             <VideoCard
               key={video.id}

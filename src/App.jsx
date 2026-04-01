@@ -9,10 +9,20 @@ function AuthGate({ children }) {
   if (loading) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--bg-base)' }}
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'var(--ast-void)',
+        }}
       >
-        <span className="spinner" />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+          <span className="spinner" style={{ width: '24px', height: '24px' }} />
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: '14px', color: 'var(--ast-muted)', letterSpacing: '0.1em' }}>
+            Loading
+          </span>
+        </div>
       </div>
     )
   }
@@ -30,10 +40,15 @@ function LoginGate({ children }) {
   if (loading) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--bg-base)' }}
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'var(--ast-void)',
+        }}
       >
-        <span className="spinner" />
+        <span className="spinner" style={{ width: '24px', height: '24px' }} />
       </div>
     )
   }

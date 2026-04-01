@@ -1,6 +1,6 @@
 import { useRef, useCallback, useImperativeHandle, forwardRef, useState } from 'react'
 import ReactPlayer from 'react-player'
-import { Play, Link2, Film } from 'lucide-react'
+import { Film, Link2 } from 'lucide-react'
 
 const VideoPlayer = forwardRef(function VideoPlayer(
   {
@@ -74,33 +74,33 @@ const VideoPlayer = forwardRef(function VideoPlayer(
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '24px',
-          backgroundColor: '#0e0e0e',
+          gap: '28px',
+          backgroundColor: 'var(--ast-void)',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        {/* Ambient gold glow */}
+        {/* Ambient gold radial glow */}
         <div style={{
           position: 'absolute',
-          width: '400px',
-          height: '400px',
+          width: '500px',
+          height: '500px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(233,195,73,0.04) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(201,169,110,0.03) 0%, transparent 70%)',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           pointerEvents: 'none',
         }} />
 
-        {/* Icon */}
+        {/* Icon container */}
         <div
           style={{
             width: '80px',
             height: '80px',
             borderRadius: '50%',
-            background: 'rgba(233,195,73,0.06)',
-            border: '1px solid rgba(233,195,73,0.12)',
+            background: 'var(--ast-gold-dim)',
+            border: '1px solid rgba(201,169,110,0.10)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -108,35 +108,37 @@ const VideoPlayer = forwardRef(function VideoPlayer(
           }}
         >
           <Film
-            size={30}
+            size={28}
             strokeWidth={1.5}
-            style={{ color: '#e9c349' }}
+            style={{ color: 'var(--ast-gold)' }}
           />
         </div>
 
         {/* Text */}
         <div style={{ textAlign: 'center', position: 'relative' }}>
           <p style={{
-            fontSize: '18px',
+            fontSize: '20px',
             fontWeight: 300,
-            fontFamily: 'Manrope, sans-serif',
-            color: '#e5e2e1',
-            marginBottom: '8px',
-            letterSpacing: '-0.02em',
+            fontFamily: 'var(--font-display)',
+            color: 'var(--ast-ivory)',
+            marginBottom: '10px',
+            letterSpacing: '-0.01em',
           }}>
-            Ready to watch
+            Ready to Watch
           </p>
           <p style={{
-            fontSize: '12px',
-            color: '#c4c7c7',
+            fontSize: '11px',
+            color: 'var(--ast-muted)',
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
+            gap: '8px',
             justifyContent: 'center',
             textTransform: 'uppercase',
-            letterSpacing: '0.1em',
+            letterSpacing: '0.15em',
+            fontFamily: 'var(--font-body)',
+            fontWeight: 500,
           }}>
-            <Link2 size={13} style={{ color: '#e9c349', flexShrink: 0 }} />
+            <Link2 size={12} style={{ color: 'var(--ast-gold-dark)', flexShrink: 0 }} />
             Paste a URL below to begin
           </p>
         </div>
@@ -189,12 +191,12 @@ const VideoPlayer = forwardRef(function VideoPlayer(
         }}>
           <div
             style={{
-              width: '48px',
-              height: '48px',
+              width: '44px',
+              height: '44px',
               borderRadius: '50%',
-              border: '3px solid rgba(233,195,73,0.15)',
-              borderTopColor: '#e9c349',
-              animation: 'spin 600ms linear infinite',
+              border: '2px solid rgba(201,169,110,0.12)',
+              borderTopColor: 'var(--ast-gold)',
+              animation: 'spin 700ms linear infinite',
             }}
           />
         </div>

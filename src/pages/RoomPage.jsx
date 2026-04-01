@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { LogOut, Upload, Menu, X, PlaySquare, Search, Library as LibraryIcon, Film, Users } from 'lucide-react'
+import { LogOut, Upload, X, Search, Film, Library as LibraryIcon, Play } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useRoom } from '../hooks/useRoom'
 import { useSync } from '../hooks/useSync'
@@ -30,7 +30,7 @@ export default function RoomPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [urlBarValue, setUrlBarValue] = useState('')
 
-  // -- Sync Logic --
+  // -- Sync Logic (unchanged) --
   const handleSyncEvent = useCallback((event, payload) => {
     isSyncingRef.current = true
 
@@ -88,7 +88,7 @@ export default function RoomPage() {
     })
   }, [room, getCatchUpState])
 
-  // -- Player Handlers --
+  // -- Player Handlers (unchanged) --
   const handlePlay = useCallback(() => {
     if (isSyncingRef.current) return
     const time = playerRef.current?.getCurrentTime() ?? 0
@@ -159,58 +159,136 @@ export default function RoomPage() {
   }, [handleLoadUrl])
 
   return (
-    <div id="cs-room-root" className="bg-background font-body text-on-background selection:bg-primary/30 selection:text-on-surface overflow-hidden min-h-screen">
-      {/* Top Navigation */}
-      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 h-14 md:h-[72px] bg-[#131313]/80 backdrop-blur-xl" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <div className="flex items-center gap-2 pl-12 md:pl-0">
-          <span className="text-lg md:text-2xl font-bold tracking-tighter text-on-surface font-headline">CinemaSync</span>
+    <div
+      className="ast-room-root ast-noise"
+      style={{
+        background: 'var(--ast-void)',
+        fontFamily: 'var(--font-body)',
+        color: 'var(--ast-ivory)',
+        overflow: 'hidden',
+        minHeight: '100vh',
+        minHeight: '100dvh',
+      }}
+    >
+      {/* ════════════════════════════════════════════
+          TOP NAVIGATION BAR
+          ════════════════════════════════════════════ */}
+      <nav
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 50,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '0 20px',
+          height: '60px',
+          background: 'rgba(5, 5, 5, 0.85)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '1px solid var(--ast-border-subtle)',
+          paddingTop: 'env(safe-area-inset-top)',
+        }}
+      >
+        {/* Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{
+            width: '28px',
+            height: '28px',
+            borderRadius: '6px',
+            background: 'var(--ast-gold-dim)',
+            border: '1px solid rgba(201,169,110,0.12)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <Film size={14} style={{ color: 'var(--ast-gold)' }} />
+          </div>
+          <span style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '18px',
+            fontWeight: 500,
+            color: 'var(--ast-ivory)',
+            letterSpacing: '-0.02em',
+          }}>
+            CinemaSync
+          </span>
         </div>
-        <div className="flex items-center gap-3 md:gap-4">
+
+        {/* Right side */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <PresenceIndicator partner={partnerPresence} />
-          {/* User logout */}
+
+          {/* User avatar / logout */}
           <button
             onClick={logout}
             title={`Logout (${username})`}
-            className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-primary-container border border-outline-variant/15 flex items-center justify-center text-primary font-headline font-bold text-xs hover:bg-surface-container-highest transition-colors duration-300 uppercase"
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              background: 'var(--ast-gold-dim)',
+              border: '1px solid rgba(201,169,110,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--ast-gold)',
+              fontFamily: 'var(--font-display)',
+              fontWeight: 600,
+              fontSize: '13px',
+              cursor: 'pointer',
+              textTransform: 'uppercase',
+              transition: 'all var(--dur-fast) ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--ast-gold)'
+              e.currentTarget.style.color = 'var(--ast-on-gold)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'var(--ast-gold-dim)'
+              e.currentTarget.style.color = 'var(--ast-gold)'
+            }}
           >
             {username ? username.charAt(0) : '?'}
           </button>
         </div>
       </nav>
 
-      {/* Side Navigation - hidden on mobile */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full flex-col p-6 z-40 bg-[#131313] border-r border-outline-variant/10 w-20 hover:w-64 transition-all duration-500 group overflow-hidden" style={{ boxShadow: '40px 0 60px rgba(14,14,14,0.04)' }}>
-        <div className="mb-12 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center shrink-0">
-            <Film size={20} className="text-primary" />
-          </div>
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <h2 className="text-xl font-black text-primary font-headline leading-none">CinemaSync</h2>
-            <p className="text-[10px] text-on-surface-variant font-body uppercase tracking-wider mt-1">Private Session</p>
-          </div>
-        </div>
-        <nav className="flex flex-col gap-6 flex-1">
-          <button onClick={() => setSidebarOpen(true)} className="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container hover:text-on-surface p-3 rounded-lg transition-all duration-300 w-full text-left">
-            <LibraryIcon size={20} className="shrink-0" />
-            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-body uppercase tracking-[0.1rem] text-sm whitespace-nowrap">Gallery</span>
-          </button>
-          <button className="flex items-center gap-4 text-primary border-r-2 border-primary bg-surface-container p-3 rounded-lg transition-all duration-300 w-full text-left">
-            <PlaySquare size={20} className="shrink-0" />
-            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-body uppercase tracking-[0.1rem] text-sm whitespace-nowrap">Sync</span>
-          </button>
-        </nav>
-        <button onClick={() => setShowUpload(true)} className="mt-auto bg-primary text-on-primary font-bold py-4 rounded-lg flex items-center justify-center gap-2 group-hover:px-6 transition-all duration-300 shrink-0">
-          <Upload size={20} />
-          <span className="hidden group-hover:block font-body uppercase tracking-[0.1rem] text-xs whitespace-nowrap">Add Video</span>
-        </button>
-      </aside>
-
-      {/* Main Content */}
-      <main className="md:ml-20 min-h-screen flex flex-col items-center p-4 md:p-8 lg:p-12 xl:p-20 relative bg-surface-container-lowest" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 72px)' }}>
-
-        {/* Video Canvas Section */}
-        <div className="relative w-full max-w-7xl aspect-video rounded-none md:rounded-xl overflow-hidden shadow-2xl group/player video-container bg-black border-0 md:border md:border-outline-variant/10">
-          <div className="absolute inset-0 z-0">
+      {/* ════════════════════════════════════════════
+          MAIN CONTENT
+          ════════════════════════════════════════════ */}
+      <main
+        style={{
+          minHeight: '100vh',
+          minHeight: '100dvh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '16px',
+          paddingTop: 'calc(env(safe-area-inset-top) + 76px)',
+          background: 'var(--ast-deep)',
+          overflowY: 'auto',
+        }}
+      >
+        {/* Video Player */}
+        <div
+          className="ast-player-wrap"
+          style={{
+            position: 'relative',
+            width: '100%',
+            maxWidth: '1200px',
+            aspectRatio: '16/9',
+            overflow: 'hidden',
+            background: '#000',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6)',
+          }}
+          /* border-radius handled via CSS media query class below */
+          id="ast-video-player"
+        >
+          {/* Player */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
             <VideoPlayer
               ref={playerRef}
               url={videoUrl}
@@ -226,8 +304,19 @@ export default function RoomPage() {
             />
           </div>
 
-          {/* Control Bar Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 z-20 player-hover-show bg-gradient-to-t from-black/80 to-transparent pt-12 pb-4">
+          {/* Controls overlay */}
+          <div
+            className="ast-player-controls"
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 20,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
+              paddingTop: '60px',
+            }}
+          >
             <ControlBar
               isPlaying={isPlaying}
               currentTime={currentTime}
@@ -241,58 +330,223 @@ export default function RoomPage() {
           </div>
         </div>
 
-        {/* URL Input Area */}
-        <div className="mt-6 md:mt-10 w-full max-w-2xl flex flex-col items-center gap-5 md:gap-8 z-10 px-0 md:px-0">
+        {/* Below player section */}
+        <div style={{
+          width: '100%',
+          maxWidth: '720px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '24px',
+          marginTop: '28px',
+          padding: '0 4px',
+        }}>
           {/* URL Input */}
-          <div className="w-full relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/10 to-transparent rounded-lg blur opacity-0 group-hover:opacity-60 transition-opacity duration-1000"></div>
-            <div className="relative bg-surface-container-low border border-outline-variant/10 rounded-lg p-1 flex items-center gap-2 focus-within:bg-surface-container transition-all duration-500">
-              <Search className="text-on-surface-variant ml-3 md:ml-4 shrink-0" size={16} />
+          <div style={{
+            width: '100%',
+            position: 'relative',
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '4px 4px 4px 20px',
+              borderRadius: 'var(--radius-md)',
+              background: 'var(--ast-surface)',
+              border: '1px solid var(--ast-border)',
+              transition: 'border-color var(--dur-base) ease, box-shadow var(--dur-base) ease',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'var(--ast-border-gold)'
+              e.currentTarget.style.boxShadow = '0 0 0 1px var(--ast-gold-dim)'
+            }}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget)) {
+                e.currentTarget.style.borderColor = 'var(--ast-border)'
+                e.currentTarget.style.boxShadow = 'none'
+              }
+            }}
+            >
+              <Search size={15} style={{ color: 'var(--ast-muted)', flexShrink: 0 }} />
               <input
-                className="w-full bg-transparent border-none text-on-surface placeholder:text-on-tertiary-container focus:outline-none focus:ring-0 font-body text-sm py-3 md:py-4 px-1 md:px-2"
-                placeholder="Paste video URL to sync..."
                 type="text"
+                placeholder="Paste video URL to sync..."
                 value={urlBarValue}
                 onChange={(e) => setUrlBarValue(e.target.value)}
                 onKeyDown={handleUrlKeyDown}
                 onPaste={handleUrlPaste}
-                style={{ fontSize: '16px' }} /* Prevents iOS zoom on focus */
+                style={{
+                  flex: 1,
+                  background: 'transparent',
+                  border: 'none',
+                  outline: 'none',
+                  color: 'var(--ast-ivory)',
+                  fontSize: '16px',
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 300,
+                  padding: '12px 0',
+                }}
               />
-              <button onClick={handleUrlSubmit} className="bg-primary text-on-primary px-5 md:px-6 py-2.5 md:py-3 rounded-md font-label text-xs uppercase tracking-[0.12rem] font-bold hover:bg-secondary transition-all duration-300 active:scale-95 shrink-0">
+              <button
+                onClick={handleUrlSubmit}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: 'var(--radius-sm)',
+                  border: 'none',
+                  background: 'var(--ast-gold)',
+                  color: 'var(--ast-on-gold)',
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 600,
+                  fontSize: '12px',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  transition: 'all var(--dur-fast) ease',
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--ast-gold-light)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'var(--ast-gold)'
+                }}
+              >
                 Load
               </button>
             </div>
           </div>
 
-          {/* Info section */}
-          <div className="flex flex-col items-center gap-2 text-center">
-            <h1 className="text-xl md:text-3xl font-light font-headline tracking-tight text-on-surface/80">The Midnight Gallery</h1>
-            <p className="text-[10px] md:text-xs font-label text-on-tertiary-container uppercase tracking-[0.2rem]">
-              Watching with <span className="text-secondary">{partnerPresence ? partnerPresence.username : 'Yourself'}</span>
+          {/* Watching info */}
+          <div style={{ textAlign: 'center' }}>
+            <p style={{
+              fontSize: '11px',
+              fontWeight: 500,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: 'var(--ast-muted)',
+              fontFamily: 'var(--font-body)',
+            }}>
+              Watching with{' '}
+              <span style={{ color: 'var(--ast-gold)' }}>
+                {partnerPresence ? partnerPresence.username : 'yourself'}
+              </span>
             </p>
           </div>
-        </div>
 
-        {/* Cinematic Scrim */}
-        <div className="fixed bottom-0 left-0 w-full h-32 scrim-bottom pointer-events-none z-0"></div>
+          {/* Action buttons — desktop only */}
+          <div className="hidden md:flex" style={{ gap: '12px' }}>
+            <button
+              onClick={() => setSidebarOpen(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '12px 28px',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--ast-border)',
+                background: 'var(--ast-surface)',
+                color: 'var(--ast-silver)',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 500,
+                fontSize: '12px',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                transition: 'all var(--dur-base) ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--ast-elevated)'
+                e.currentTarget.style.color = 'var(--ast-ivory)'
+                e.currentTarget.style.borderColor = 'var(--ast-border-gold)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--ast-surface)'
+                e.currentTarget.style.color = 'var(--ast-silver)'
+                e.currentTarget.style.borderColor = 'var(--ast-border)'
+              }}
+            >
+              <LibraryIcon size={16} />
+              Gallery
+            </button>
+
+            <button
+              onClick={() => setShowUpload(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '12px 28px',
+                borderRadius: 'var(--radius-md)',
+                border: 'none',
+                background: 'var(--ast-gold)',
+                color: 'var(--ast-on-gold)',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 600,
+                fontSize: '12px',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                transition: 'all var(--dur-base) ease',
+                boxShadow: '0 4px 20px rgba(201,169,110,0.15)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--ast-gold-light)'
+                e.currentTarget.style.transform = 'translateY(-1px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--ast-gold)'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              <Upload size={16} />
+              Upload
+            </button>
+          </div>
+        </div>
       </main>
 
-      {/* Mobile Bottom Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-6 pt-2 bg-[#131313]/80 backdrop-blur-xl border-t border-outline-variant/10" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)' }}>
-        <button onClick={() => setSidebarOpen(true)} className="flex flex-col items-center justify-center py-2 px-3 text-on-surface-variant active:scale-90 transition-transform">
-          <LibraryIcon size={20} />
-          <span className="font-label text-[10px] uppercase tracking-wide mt-1">Gallery</span>
-        </button>
-        <button className="flex flex-col items-center justify-center py-2 px-3 text-primary">
-          <PlaySquare size={20} />
-          <span className="font-label text-[10px] uppercase tracking-wide mt-1">Sync</span>
-        </button>
-        <button onClick={() => setShowUpload(true)} className="flex flex-col items-center justify-center py-2 px-3 text-on-surface-variant active:scale-90 transition-transform">
-          <Upload size={20} />
-          <span className="font-label text-[10px] uppercase tracking-wide mt-1">Upload</span>
-        </button>
+      {/* ════════════════════════════════════════════
+          MOBILE BOTTOM BAR
+          ════════════════════════════════════════════ */}
+      <nav
+        className="md:hidden"
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 40,
+          display: 'flex',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          padding: '8px 24px',
+          paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
+          background: 'rgba(5, 5, 5, 0.9)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderTop: '1px solid var(--ast-border-subtle)',
+        }}
+      >
+        <MobileNavButton
+          icon={<LibraryIcon size={20} />}
+          label="Gallery"
+          onClick={() => setSidebarOpen(true)}
+        />
+        <MobileNavButton
+          icon={<Play size={20} />}
+          label="Sync"
+          active
+        />
+        <MobileNavButton
+          icon={<Upload size={20} />}
+          label="Upload"
+          onClick={() => setShowUpload(true)}
+        />
       </nav>
 
+      {/* ════════════════════════════════════════════
+          SIDEBAR DRAWER
+          ════════════════════════════════════════════ */}
       <SidebarDrawer
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -304,12 +558,45 @@ export default function RoomPage() {
         onRename={renameVideo}
       />
 
+      {/* Upload Modal */}
       <UploadModal isOpen={showUpload} onClose={() => setShowUpload(false)} />
     </div>
   )
 }
 
-/* ── Sidebar / Drawer Component ── */
+/* ── Mobile Nav Button ─────────────────────────────── */
+function MobileNavButton({ icon, label, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '4px',
+        padding: '6px 16px',
+        background: 'none',
+        border: 'none',
+        color: active ? 'var(--ast-gold)' : 'var(--ast-muted)',
+        cursor: 'pointer',
+        transition: 'color var(--dur-fast) ease',
+      }}
+    >
+      {icon}
+      <span style={{
+        fontSize: '10px',
+        fontWeight: 600,
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase',
+      }}>
+        {label}
+      </span>
+    </button>
+  )
+}
+
+/* ── Sidebar / Library Drawer ──────────────────────── */
 function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpload, onDelete, onRename }) {
   return (
     <>
@@ -319,67 +606,87 @@ function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpl
         style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.65)',
-          backdropFilter: 'blur(6px)',
-          WebkitBackdropFilter: 'blur(6px)',
+          background: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           opacity: isOpen ? 1 : 0,
           pointerEvents: isOpen ? 'auto' : 'none',
-          transition: 'opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'opacity 350ms var(--ease-smooth)',
           zIndex: 55,
         }}
       />
 
-      {/* Drawer - from right side */}
+      {/* Drawer */}
       <aside
-        className="yt-sidebar"
+        className="ast-drawer"
         style={{
           transform: `translateX(${isOpen ? '0' : '100%'})`,
         }}
       >
+        {/* Header */}
         <div style={{
-          padding: 'calc(16px + env(safe-area-inset-top)) 20px 16px',
+          padding: 'calc(16px + env(safe-area-inset-top)) 24px 16px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderBottom: '1px solid rgba(68, 71, 72, 0.15)',
+          borderBottom: '1px solid var(--ast-border)',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Film size={18} style={{ color: '#e9c349' }} />
-            <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#e5e2e1', fontFamily: 'Manrope, sans-serif' }}>Library</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Film size={16} style={{ color: 'var(--ast-gold)' }} />
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '18px',
+              fontWeight: 500,
+              color: 'var(--ast-ivory)',
+            }}>
+              Library
+            </h2>
           </div>
           <button
             onClick={onClose}
             style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: 'var(--radius-sm)',
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--ast-muted)',
+              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              background: 'transparent',
-              border: 'none',
-              color: '#7e7d7d',
-              cursor: 'pointer',
-              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+              transition: 'all var(--dur-fast) ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#2a2a2a'
-              e.currentTarget.style.color = '#e5e2e1'
+              e.currentTarget.style.background = 'var(--ast-elevated)'
+              e.currentTarget.style.color = 'var(--ast-ivory)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent'
-              e.currentTarget.style.color = '#7e7d7d'
+              e.currentTarget.style.color = 'var(--ast-muted)'
             }}
           >
             <X size={18} />
           </button>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-          <Library videos={library} activeUrl={activeUrl} onSelect={onSelectUrl} onDelete={onDelete} onRename={onRename} />
+        {/* Content */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+          <Library
+            videos={library}
+            activeUrl={activeUrl}
+            onSelect={onSelectUrl}
+            onDelete={onDelete}
+            onRename={onRename}
+          />
         </div>
 
-        <div style={{ padding: '16px 20px calc(20px + env(safe-area-inset-bottom))', borderTop: '1px solid rgba(68, 71, 72, 0.15)' }}>
+        {/* Footer */}
+        <div style={{
+          padding: '16px 24px',
+          paddingBottom: 'calc(20px + env(safe-area-inset-bottom))',
+          borderTop: '1px solid var(--ast-border)',
+        }}>
           <button
             onClick={onUpload}
             style={{
@@ -389,24 +696,25 @@ function SidebarDrawer({ isOpen, onClose, library, activeUrl, onSelectUrl, onUpl
               justifyContent: 'center',
               gap: '10px',
               padding: '14px',
-              borderRadius: '10px',
+              borderRadius: 'var(--radius-md)',
               border: 'none',
-              background: '#e9c349',
-              color: '#3c2f00',
-              fontWeight: 700,
-              fontSize: '13px',
-              fontFamily: 'Manrope, sans-serif',
+              background: 'var(--ast-gold)',
+              color: 'var(--ast-on-gold)',
+              fontWeight: 600,
+              fontSize: '12px',
+              fontFamily: 'var(--font-body)',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
               cursor: 'pointer',
-              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-              letterSpacing: '0.02em',
-              boxShadow: '0 4px 20px rgba(233, 195, 73, 0.15)',
+              transition: 'all var(--dur-base) ease',
+              boxShadow: '0 4px 20px rgba(201, 169, 110, 0.12)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#ffdf9e'
+              e.currentTarget.style.background = 'var(--ast-gold-light)'
               e.currentTarget.style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#e9c349'
+              e.currentTarget.style.background = 'var(--ast-gold)'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >

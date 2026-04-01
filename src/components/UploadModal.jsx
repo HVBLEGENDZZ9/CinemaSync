@@ -11,10 +11,8 @@ export default function UploadModal({ isOpen, onClose }) {
   const fileInputRef = useRef(null)
   const overlayRef = useRef(null)
 
-  // Prevent closing during upload
   const canClose = !uploading
 
-  // Escape key handler
   useEffect(() => {
     if (!isOpen) return
     function handleKey(e) {
@@ -52,7 +50,6 @@ export default function UploadModal({ isOpen, onClose }) {
       setError(null)
 
       try {
-        // Step 1: Get presigned upload URL from edge function
         const { data: { session } } = await supabase.auth.getSession()
         const token = session?.access_token
 
@@ -84,7 +81,6 @@ export default function UploadModal({ isOpen, onClose }) {
 
         const { uploadUrl, publicUrl } = await response.json()
 
-        // Step 2: Upload to R2 via XHR for progress tracking
         await new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest()
 
@@ -109,7 +105,6 @@ export default function UploadModal({ isOpen, onClose }) {
           xhr.send(uploadFile)
         })
 
-        // Step 3: Record in video_library table
         const { error: insertError } = await supabase
           .from('video_library')
           .insert({
@@ -123,7 +118,6 @@ export default function UploadModal({ isOpen, onClose }) {
           throw insertError
         }
 
-        // Auto-close on success
         setProgress(100)
         setTimeout(() => {
           setFile(null)
@@ -165,77 +159,110 @@ export default function UploadModal({ isOpen, onClose }) {
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 70,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+      }}
     >
       <div
-        className="relative flex flex-col gap-5 anim-fade-up w-full"
+        className="ast-scale-in"
         style={{
+          position: 'relative',
+          width: '100%',
           maxWidth: '440px',
-          minHeight: '280px',
-          backgroundColor: '#201f1f',
-          borderRadius: '12px',
-          padding: '24px',
-          border: '1px solid rgba(68, 71, 72, 0.15)',
-          boxShadow: '0 40px 60px rgba(0,0,0,0.5)',
+          minHeight: '300px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px',
+          padding: '32px',
+          borderRadius: 'var(--radius-lg)',
+          background: 'var(--ast-base)',
+          border: '1px solid var(--ast-border)',
+          boxShadow: '0 40px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.02)',
         }}
       >
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <h3 style={{
-            fontFamily: 'Manrope, sans-serif',
-            fontSize: '18px',
-            fontWeight: 600,
-            color: '#e5e2e1',
-            letterSpacing: '-0.02em',
-          }}>
-            Upload Video
-          </h3>
+          <div>
+            <h3 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '22px',
+              fontWeight: 500,
+              color: 'var(--ast-ivory)',
+              letterSpacing: '-0.01em',
+            }}>
+              Upload Video
+            </h3>
+            <p style={{
+              fontSize: '11px',
+              color: 'var(--ast-muted)',
+              marginTop: '4px',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+            }}>
+              Add to your library
+            </p>
+          </div>
           {canClose && (
             <button
               onClick={onClose}
+              aria-label="Close"
               style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
+                width: '36px',
+                height: '36px',
+                borderRadius: 'var(--radius-sm)',
                 border: 'none',
                 background: 'transparent',
-                color: '#7e7d7d',
+                color: 'var(--ast-muted)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all var(--dur-fast) ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#2a2a2a'
-                e.currentTarget.style.color = '#e5e2e1'
+                e.currentTarget.style.background = 'var(--ast-elevated)'
+                e.currentTarget.style.color = 'var(--ast-ivory)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'transparent'
-                e.currentTarget.style.color = '#7e7d7d'
+                e.currentTarget.style.color = 'var(--ast-muted)'
               }}
-              aria-label="Close"
             >
-              <X size={16} />
+              <X size={18} />
             </button>
           )}
         </div>
 
         {/* Drop zone */}
         <div
-          className="flex-1 flex flex-col items-center justify-center gap-4 cursor-pointer"
           style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '20px',
+            cursor: uploading ? 'default' : 'pointer',
             border: isDragOver
-              ? '1px dashed #e9c349'
-              : '1px dashed rgba(68, 71, 72, 0.3)',
-            borderRadius: '10px',
-            backgroundColor: isDragOver
-              ? 'rgba(233, 195, 73, 0.06)'
-              : 'rgba(28, 27, 27, 0.5)',
-            transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-            minHeight: '180px',
-            padding: '24px',
+              ? '1px dashed var(--ast-gold)'
+              : '1px dashed rgba(255, 255, 255, 0.08)',
+            borderRadius: 'var(--radius-md)',
+            background: isDragOver
+              ? 'var(--ast-gold-dim)'
+              : 'var(--ast-surface)',
+            transition: 'all var(--dur-base) var(--ease-smooth)',
+            minHeight: '200px',
+            padding: '32px 24px',
           }}
           onClick={() => !uploading && fileInputRef.current?.click()}
           onDragOver={handleDragOver}
@@ -247,87 +274,91 @@ export default function UploadModal({ isOpen, onClose }) {
             type="file"
             accept="video/*"
             onChange={handleFileSelect}
-            className="hidden"
+            style={{ display: 'none' }}
           />
 
           {!uploading && !file && (
             <>
               <div style={{
-                width: '56px',
-                height: '56px',
+                width: '60px',
+                height: '60px',
                 borderRadius: '50%',
-                background: 'rgba(233, 195, 73, 0.08)',
-                border: '1px solid rgba(233, 195, 73, 0.15)',
+                background: 'var(--ast-gold-dim)',
+                border: '1px solid rgba(201, 169, 110, 0.12)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <Upload
-                  size={22}
-                  strokeWidth={1.5}
-                  style={{ color: '#e9c349' }}
-                />
+                <Upload size={24} strokeWidth={1.5} style={{ color: 'var(--ast-gold)' }} />
               </div>
               <div style={{ textAlign: 'center' }}>
                 <p style={{
-                  fontSize: '14px',
+                  fontSize: '15px',
                   fontWeight: 500,
-                  color: '#e5e2e1',
-                  marginBottom: '4px',
+                  color: 'var(--ast-ivory)',
+                  marginBottom: '6px',
                 }}>
                   Drop video file here
                 </p>
                 <p style={{
                   fontSize: '12px',
-                  color: '#7e7d7d',
+                  color: 'var(--ast-muted)',
                   letterSpacing: '0.02em',
                 }}>
-                  or click to browse
+                  or click to browse files
                 </p>
               </div>
             </>
           )}
 
           {uploading && (
-            <div className="flex flex-col items-center gap-4 w-full px-4">
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '20px',
+              width: '100%',
+              padding: '0 16px',
+            }}>
               <div style={{
                 width: '40px',
                 height: '40px',
                 borderRadius: '50%',
-                border: '2px solid rgba(233,195,73,0.15)',
-                borderTopColor: '#e9c349',
-                animation: 'spin 600ms linear infinite',
+                border: '2px solid rgba(201,169,110,0.12)',
+                borderTopColor: 'var(--ast-gold)',
+                animation: 'spin 700ms linear infinite',
               }} />
-              <span
-                className="truncate max-w-full"
-                style={{
-                  fontSize: '13px',
-                  color: '#c4c7c7',
-                  fontWeight: 500,
-                }}
-              >
+              <span style={{
+                fontSize: '13px',
+                color: 'var(--ast-silver)',
+                fontWeight: 500,
+                maxWidth: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
                 {file?.name}
               </span>
               {/* Progress bar */}
               <div style={{
                 width: '100%',
-                height: '4px',
+                height: '3px',
                 borderRadius: '99px',
-                background: '#1c1b1b',
+                background: 'var(--ast-elevated)',
                 overflow: 'hidden',
               }}>
                 <div style={{
                   height: '100%',
                   width: `${progress}%`,
                   borderRadius: '99px',
-                  background: 'linear-gradient(90deg, #e9c349, #ffdf9e)',
+                  background: 'linear-gradient(90deg, var(--ast-gold-dark), var(--ast-gold))',
                   transition: 'width 200ms linear',
                 }} />
               </div>
               <span style={{
-                fontSize: '12px',
-                fontFamily: "'DM Mono', monospace",
-                color: '#e9c349',
+                fontSize: '13px',
+                fontFamily: 'var(--font-mono)',
+                color: 'var(--ast-gold)',
                 fontWeight: 500,
               }}>
                 {progress}%
@@ -340,8 +371,9 @@ export default function UploadModal({ isOpen, onClose }) {
         {error && (
           <p style={{
             fontSize: '13px',
-            color: '#ff4e4e',
+            color: 'var(--ast-crimson)',
             textAlign: 'center',
+            fontWeight: 500,
           }}>
             {error}
           </p>

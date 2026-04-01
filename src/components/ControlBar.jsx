@@ -37,10 +37,39 @@ export default function ControlBar({
     onSeek(newTime)
   }, [currentTime, onSeek])
 
+  const btnStyle = {
+    background: 'none',
+    border: 'none',
+    color: 'var(--ast-ivory)',
+    cursor: 'pointer',
+    padding: '6px',
+    borderRadius: '6px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'color var(--dur-fast) ease, background var(--dur-fast) ease',
+  }
+
   return (
-    <div className="absolute bottom-3 md:bottom-6 left-3 md:left-6 right-3 md:right-6 flex flex-col gap-3 md:gap-4">
-      {/* Seek Bar */}
-      <div className="relative w-full h-1 bg-on-surface-variant/20 rounded-full cursor-pointer group/bar">
+    <div style={{
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      padding: '0 12px 12px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+    }}>
+      {/* Seek bar */}
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        height: '3px',
+        background: 'rgba(255,255,255,0.12)',
+        borderRadius: '99px',
+        cursor: 'pointer',
+      }}>
         <input
           ref={seekRef}
           type="range"
@@ -54,53 +83,130 @@ export default function ControlBar({
           onMouseUp={handleSeekEnd}
           onTouchEnd={handleSeekEnd}
           aria-label="Seek"
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-          style={{ minHeight: '32px', marginTop: '-14px' }}
+          className="ast-seek-input"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            zIndex: 2,
+            minHeight: '28px',
+            marginTop: '-12px',
+          }}
         />
         <div
-          className="absolute h-full bg-primary rounded-full z-0 transition-all pointer-events-none"
-          style={{ width: `${fillPercent}%`, transitionTimingFunction: 'linear', transitionDuration: isSeeking ? '0ms' : '100ms' }}
-        >
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full scale-0 group-hover/bar:scale-100 transition-transform shadow-[0_0_15px_rgba(233,195,73,0.5)]"></div>
-        </div>
+          style={{
+            position: 'absolute',
+            height: '100%',
+            background: 'var(--ast-gold)',
+            borderRadius: '99px',
+            width: `${fillPercent}%`,
+            transition: isSeeking ? 'none' : 'width 100ms linear',
+            pointerEvents: 'none',
+          }}
+        />
       </div>
 
-      {/* Control Bar */}
-      <div className="flex items-center justify-between px-3 md:px-4 py-2.5 md:py-3 glass-blur bg-surface/40 rounded-xl border border-outline-variant/10">
-        <div className="flex items-center gap-3 md:gap-5">
-          <button onClick={skipBack} className="text-on-surface hover:text-primary transition-colors duration-300 focus:outline-none p-1">
-            <SkipBack size={18} />
-          </button>
-          <button onClick={onPlayPause} className="text-on-surface hover:text-primary transition-colors duration-300 focus:outline-none p-1">
-            {isPlaying ? <Pause size={22} fill="currentColor" /> : <Play size={22} fill="currentColor" />}
-          </button>
-          <button onClick={skipForward} className="text-on-surface hover:text-primary transition-colors duration-300 focus:outline-none p-1">
-            <SkipForward size={18} />
+      {/* Controls row */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '6px 8px',
+        borderRadius: 'var(--radius-md)',
+        background: 'rgba(10, 10, 10, 0.6)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255,255,255,0.04)',
+      }}>
+        {/* Left controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <button
+            onClick={skipBack}
+            style={btnStyle}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--ast-gold)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--ast-ivory)'}
+          >
+            <SkipBack size={16} />
           </button>
 
-          <div className="hidden sm:flex items-center gap-3 ml-2">
-            <button onClick={onToggleMute} className="text-on-surface hover:text-primary transition-colors duration-300 focus:outline-none p-1">
-              {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+          <button
+            onClick={onPlayPause}
+            style={{ ...btnStyle, padding: '6px 8px' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--ast-gold)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--ast-ivory)'}
+          >
+            {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+          </button>
+
+          <button
+            onClick={skipForward}
+            style={btnStyle}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--ast-gold)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--ast-ivory)'}
+          >
+            <SkipForward size={16} />
+          </button>
+
+          {/* Volume — desktop only */}
+          <div className="hidden sm:flex" style={{ alignItems: 'center', gap: '4px', marginLeft: '8px' }}>
+            <button
+              onClick={onToggleMute}
+              style={btnStyle}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--ast-gold)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--ast-ivory)'}
+            >
+              {muted ? <VolumeX size={15} /> : <Volume2 size={15} />}
             </button>
-            <div className="w-16 md:w-20 h-1 bg-on-surface-variant/20 rounded-full cursor-pointer relative group/vol">
-              <div
-                className="h-full bg-on-surface group-hover/vol:bg-primary transition-colors duration-300 rounded-full"
-                style={{ width: muted ? '0%' : '100%' }}
-              ></div>
+            <div style={{
+              width: '60px',
+              height: '3px',
+              background: 'rgba(255,255,255,0.12)',
+              borderRadius: '99px',
+              position: 'relative',
+            }}>
+              <div style={{
+                height: '100%',
+                width: muted ? '0%' : '100%',
+                background: 'var(--ast-ivory)',
+                borderRadius: '99px',
+                transition: 'width var(--dur-fast) ease',
+              }} />
             </div>
           </div>
 
-          <span className="text-[10px] md:text-xs font-label text-on-surface-variant ml-1 md:ml-3 tracking-widest uppercase tabular-nums">
-            {formatTime(seekValue)} / {formatTime(duration)}
+          {/* Time */}
+          <span style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '11px',
+            color: 'var(--ast-silver)',
+            marginLeft: '12px',
+            letterSpacing: '0.05em',
+            whiteSpace: 'nowrap',
+          }}>
+            {formatTime(seekValue)}<span style={{ opacity: 0.4, margin: '0 4px' }}>/</span>{formatTime(duration)}
           </span>
         </div>
 
-        <div className="flex items-center gap-3 md:gap-5">
-          <button onClick={onToggleMute} className="sm:hidden text-on-surface hover:text-primary transition-colors duration-300 focus:outline-none p-1">
-            {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+        {/* Right controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          {/* Volume — mobile only */}
+          <button
+            onClick={onToggleMute}
+            className="sm:hidden"
+            style={{ ...btnStyle, display: 'flex' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--ast-gold)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--ast-ivory)'}
+          >
+            {muted ? <VolumeX size={15} /> : <Volume2 size={15} />}
           </button>
-          <button onClick={onToggleFullscreen} className="text-on-surface hover:text-primary transition-colors duration-300 focus:outline-none p-1">
-            <Maximize size={16} />
+
+          <button
+            onClick={onToggleFullscreen}
+            style={btnStyle}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--ast-gold)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--ast-ivory)'}
+          >
+            <Maximize size={15} />
           </button>
         </div>
       </div>

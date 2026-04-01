@@ -13,16 +13,40 @@ export default function PresenceIndicator({ partner }) {
   if (!visible) return null
 
   return (
-    <div className="flex items-center gap-2 md:gap-3 bg-surface-container/50 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-outline-variant/10 transition-opacity duration-300">
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '6px 14px',
+        borderRadius: '99px',
+        background: 'var(--ast-glass)',
+        border: '1px solid var(--ast-border-subtle)',
+        transition: 'opacity var(--dur-base) ease',
+      }}
+    >
       <div
-        className={`w-2 h-2 rounded-full ${isOnline ? 'bg-primary shadow-[0_0_8px_rgba(233,195,73,0.5)]' : 'bg-on-surface-variant/40'}`}
+        style={{
+          width: '6px',
+          height: '6px',
+          borderRadius: '50%',
+          background: isOnline ? 'var(--ast-gold)' : 'var(--ast-muted)',
+          boxShadow: isOnline ? '0 0 8px var(--ast-gold-glow)' : 'none',
+          transition: 'all var(--dur-base) ease',
+        }}
       />
-      <span className="font-label text-[10px] md:text-xs uppercase tracking-[0.1rem] text-on-surface-variant whitespace-nowrap">
-        {isOnline ? (
-          <><span className="hidden md:inline">Online: {partner.username}</span><span className="md:hidden">{partner.username}</span></>
-        ) : (
-          <span className="hidden md:inline">Partner Offline</span>
-        )}
+      <span
+        style={{
+          fontSize: '11px',
+          fontWeight: 500,
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          color: isOnline ? 'var(--ast-silver)' : 'var(--ast-muted)',
+          whiteSpace: 'nowrap',
+          fontFamily: 'var(--font-body)',
+        }}
+      >
+        {isOnline ? partner.username : ''}
       </span>
     </div>
   )
