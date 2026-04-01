@@ -159,210 +159,123 @@ export default function RoomPage() {
   }, [handleLoadUrl])
 
   return (
-    <div
-      id="cs-room-root"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'var(--bg-void)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
-      {/* ── 1. YouTube-Style Top Bar ── */}
-      <div className="yt-topbar" style={{ paddingTop: 'calc(10px + env(safe-area-inset-top))' }}>
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-          <div
-            style={{
-              width: '28px',
-              height: '28px',
-              borderRadius: '7px',
-              background: 'var(--gradient-pink-blue)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <PlaySquare size={14} color="#fff" fill="#fff" />
+    <div id="cs-room-root" className="bg-background font-body text-on-background selection:bg-primary selection:text-on-primary overflow-hidden min-h-screen">
+      {/* Top Navigation */}
+      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-4 md:py-6 bg-[#131313]/70 backdrop-blur-xl">
+        <div className="flex items-center gap-2 pl-12 md:pl-0">
+          <span className="text-xl md:text-2xl font-bold tracking-tighter text-[#e5e2e1] font-headline">CinemaSync</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:block">
+            <PresenceIndicator partner={partnerPresence} />
           </div>
-          <span
-            className="hidden sm:inline"
-            style={{
-              fontSize: '15px',
-              fontWeight: 700,
-              letterSpacing: '-0.01em',
-              color: '#fff',
-              fontFamily: 'var(--font-body)',
-            }}
-          >
-            Cinema<span style={{ color: 'var(--accent)' }}>Sync</span>
-          </span>
-        </div>
-
-        {/* URL / Search Bar */}
-        <div className="yt-search-wrapper">
-          <input
-            type="url"
-            className="yt-search-input"
-            value={urlBarValue}
-            onChange={(e) => setUrlBarValue(e.target.value)}
-            onKeyDown={handleUrlKeyDown}
-            onPaste={handleUrlPaste}
-            placeholder="Paste a video URL or YouTube link..."
-            autoComplete="off"
-          />
-          <button
-            className="yt-search-btn"
-            onClick={handleUrlSubmit}
-            aria-label="Load URL"
-          >
-            <Search size={18} />
-          </button>
-        </div>
-
-        {/* Right Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
-          <PresenceIndicator partner={partnerPresence} />
-
-          <button
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Library"
-            title="Library"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--text-secondary)',
-              cursor: 'pointer',
-              transition: 'all 150ms',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--bg-elevated)'
-              e.currentTarget.style.color = 'var(--text-primary)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent'
-              e.currentTarget.style.color = 'var(--text-secondary)'
-            }}
-          >
-            <LibraryIcon size={16} />
-          </button>
-
-          {/* User avatar / menu */}
-          <button
-            onClick={logout}
-            aria-label="Logout"
+          {/* User logout */}
+          <button 
+            onClick={logout} 
             title={`Logout (${username})`}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '28px',
-              height: '28px',
-              borderRadius: '50%',
-              border: 'none',
-              background: 'var(--gradient-pink-blue)',
-              color: '#fff',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              transition: 'all 200ms',
-              boxShadow: '0 0 0 2px var(--bg-deep)',
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 0 0 2px var(--accent)'}
-            onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 0 0 2px var(--bg-deep)'}
+            className="w-8 h-8 rounded-full bg-primary-container border border-outline-variant/20 flex items-center justify-center text-primary font-bold text-xs hover:bg-surface-container-highest transition-colors uppercase"
           >
             {username ? username.charAt(0) : '?'}
           </button>
         </div>
-      </div>
+      </nav>
 
-      {/* ── 2. Main Content Area ── */}
-      <div className="yt-video-area">
-        <div className="yt-player-wrapper">
-          {/* Video Player - 16:9 */}
-          <div className="yt-player-container">
-            <div className="yt-player-inner">
-              <VideoPlayer
-                ref={playerRef}
-                url={videoUrl}
-                isPlaying={isPlaying}
-                muted={muted}
-                onPlay={handlePlay}
-                onPause={handlePause}
-                onTimeUpdate={(state) => setCurrentTime(state.playedSeconds)}
-                onDuration={(d) => setDuration(d)}
-                onBuffer={() => !isSyncingRef.current && broadcast(EVENTS.BUFFER_START, { videoTimestamp: playerRef.current?.getCurrentTime() ?? 0 })}
-                onBufferEnd={() => !isSyncingRef.current && broadcast(EVENTS.BUFFER_END, {})}
-                onReady={() => {}}
-              />
-            </div>
+      {/* Side Navigation */}
+      <aside className="fixed left-0 top-0 h-full flex flex-col p-4 md:p-6 z-40 bg-[#131313] border-r border-[#444748]/15 shadow-[40px_0_60px_rgba(14,14,14,0.04)] w-16 md:w-20 hover:w-64 transition-all duration-500 group overflow-hidden">
+        <div className="mb-12 flex items-center gap-4 mt-2 md:mt-0">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0">
+            <Film size={20} className="text-primary" />
           </div>
-
-          {/* Control Bar */}
-          <ControlBar
-            isPlaying={isPlaying}
-            currentTime={currentTime}
-            duration={duration}
-            onPlayPause={handlePlayPause}
-            onSeek={handleSeek}
-            muted={muted}
-            onToggleMute={() => setMuted(m => !m)}
-            onToggleFullscreen={handleToggleFullscreen}
-          />
-
-          {/* Video Info */}
-          <div className="yt-info-bar">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                {partnerPresence && (
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '6px 14px',
-                    borderRadius: '20px',
-                    background: 'var(--blue-dim)',
-                    border: '1px solid rgba(62, 166, 255, 0.15)',
-                  }}>
-                    <Users size={14} style={{ color: 'var(--blue)' }} />
-                    <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--blue)' }}>
-                      Watching with {partnerPresence.username}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button
-                  className="yt-chip yt-chip-accent"
-                  onClick={() => setShowUpload(true)}
-                >
-                  <Upload size={14} />
-                  Upload
-                </button>
-                <button
-                  className="yt-chip yt-chip-default"
-                  onClick={() => setSidebarOpen(true)}
-                >
-                  <Film size={14} />
-                  Library
-                </button>
-              </div>
-            </div>
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <h2 className="text-lg md:text-xl font-black text-primary font-headline leading-none">CinemaSync</h2>
+            <p className="text-[10px] text-on-surface-variant font-body uppercase tracking-wider mt-1">Private Session</p>
           </div>
         </div>
-      </div>
+        <nav className="flex flex-col gap-4 md:gap-8 flex-1">
+          <button onClick={() => setSidebarOpen(true)} className="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container hover:text-on-surface p-2 md:p-3 rounded-lg transition-all duration-300 w-full text-left">
+            <LibraryIcon size={20} className="shrink-0" />
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-body uppercase tracking-[0.1rem] text-xs md:text-sm whitespace-nowrap">Gallery</span>
+          </button>
+          <button className="flex items-center gap-4 text-primary border-r-2 border-primary bg-surface-container p-2 md:p-3 rounded-lg transition-all duration-300 w-full text-left">
+            <PlaySquare size={20} className="shrink-0" />
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-body uppercase tracking-[0.1rem] text-xs md:text-sm whitespace-nowrap">Sync</span>
+          </button>
+        </nav>
+        <button onClick={() => setShowUpload(true)} className="mt-auto bg-primary text-on-primary font-bold py-3 md:py-4 rounded-lg flex items-center justify-center gap-2 group-hover:px-6 transition-all shrink-0">
+          <Upload size={20} />
+          <span className="hidden group-hover:block font-body uppercase tracking-[0.1rem] text-xs whitespace-nowrap">Add Video</span>
+        </button>
+      </aside>
 
-      {/* ── 3. Sidebar Drawer (Library) ── */}
+      {/* Main Content */}
+      <main className="ml-16 md:ml-20 min-h-screen flex flex-col items-center justify-center p-4 md:p-8 lg:p-20 pt-24 md:pt-20 relative bg-surface-container-lowest">
+        
+        {/* Video Canvas Section */}
+        <div className="relative w-full max-w-7xl aspect-video rounded-xl overflow-hidden shadow-2xl group/player video-container bg-black border border-outline-variant/10">
+          <div className="absolute inset-0 z-0">
+            <VideoPlayer
+              ref={playerRef}
+              url={videoUrl}
+              isPlaying={isPlaying}
+              muted={muted}
+              onPlay={handlePlay}
+              onPause={handlePause}
+              onTimeUpdate={(state) => setCurrentTime(state.playedSeconds)}
+              onDuration={(d) => setDuration(d)}
+              onBuffer={() => !isSyncingRef.current && broadcast(EVENTS.BUFFER_START, { videoTimestamp: playerRef.current?.getCurrentTime() ?? 0 })}
+              onBufferEnd={() => !isSyncingRef.current && broadcast(EVENTS.BUFFER_END, {})}
+              onReady={() => {}}
+            />
+          </div>
+
+          {/* Control Bar Overlay */}
+          <div className="absolute bottom-0 left-0 right-0 z-20 player-hover-show bg-gradient-to-t from-black/80 to-transparent pt-12 pb-4">
+            <ControlBar
+              isPlaying={isPlaying}
+              currentTime={currentTime}
+              duration={duration}
+              onPlayPause={handlePlayPause}
+              onSeek={handleSeek}
+              muted={muted}
+              onToggleMute={() => setMuted(m => !m)}
+              onToggleFullscreen={handleToggleFullscreen}
+            />
+          </div>
+        </div>
+
+        {/* URL Input Area */}
+        <div className="mt-8 md:mt-12 w-full max-w-2xl flex flex-col items-center gap-6 md:gap-8 z-10">
+          <div className="w-full relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/10 to-transparent rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
+            <div className="relative bg-surface-container-low border border-outline-variant/10 rounded-lg p-1 flex items-center gap-2 focus-within:bg-surface-container transition-all duration-500">
+              <Search className="text-on-surface-variant ml-4 shrink-0" size={18} />
+              <input 
+                className="w-full bg-transparent border-none text-on-surface placeholder:text-on-tertiary-container focus:outline-none focus:ring-0 font-body text-sm py-3 md:py-4 px-2" 
+                placeholder="Paste video URL to sync..." 
+                type="text"
+                value={urlBarValue}
+                onChange={(e) => setUrlBarValue(e.target.value)}
+                onKeyDown={handleUrlKeyDown}
+                onPaste={handleUrlPaste}
+              />
+              <button onClick={handleUrlSubmit} className="bg-primary text-on-primary px-4 md:px-6 py-2 md:py-3 rounded-md font-label text-xs uppercase tracking-[0.15rem] font-bold hover:brightness-110 transition-all active:scale-95 shrink-0">
+                Load
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-2 text-center mt-2 md:mt-4">
+            <h1 className="text-2xl md:text-3xl font-light font-headline tracking-tight text-on-surface/80">The Midnight Gallery</h1>
+            <p className="text-[10px] md:text-xs font-body text-on-tertiary-container uppercase tracking-[0.2rem]">
+              Watching with <span className="text-secondary">{partnerPresence ? partnerPresence.username : 'Yourself'}</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Cinematic Scrim */}
+        <div className="fixed bottom-0 left-0 w-full h-32 scrim-bottom pointer-events-none z-0"></div>
+      </main>
+
       <SidebarDrawer
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -374,7 +287,6 @@ export default function RoomPage() {
         onRename={renameVideo}
       />
 
-      {/* ── 4. Upload Modal ── */}
       <UploadModal isOpen={showUpload} onClose={() => setShowUpload(false)} />
     </div>
   )
