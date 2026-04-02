@@ -500,10 +500,13 @@ input, button, textarea {
 /* ═══════════════════════════════════════════════════════
    FULLSCREEN
    ═══════════════════════════════════════════════════════ */
-:fullscreen {
-  background-color: #000 !important;
-}
-:-webkit-full-screen {
+#ast-video-player:fullscreen,
+#ast-video-player:-webkit-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  aspect-ratio: auto !important;
+  border-radius: 0 !important;
   background-color: #000 !important;
 }
 :fullscreen .ast-player-controls {

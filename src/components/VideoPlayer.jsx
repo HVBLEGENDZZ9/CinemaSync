@@ -1,5 +1,4 @@
-import { useRef, useCallback, useImperativeHandle, forwardRef, useState } from 'react'
-import ReactPlayer from 'react-player'
+import { useRef, useCallback, useImperativeHandle, forwardRef, useState, useEffect } from 'react'
 import { Film, Link2 } from 'lucide-react'
 
 const VideoPlayer = forwardRef(function VideoPlayer(
@@ -17,22 +16,33 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   },
   ref
 ) {
-  const playerRef = useRef(null)
+  const videoRef = useRef(null)
   const [isBuffering, setIsBuffering] = useState(false)
 
   useImperativeHandle(ref, () => ({
     seekTo: (seconds) => {
-      if (playerRef.current) {
-        playerRef.current.currentTime = seconds
+      if (videoRef.current) {
+        videoRef.current.currentTime = seconds
       }
     },
     getCurrentTime: () => {
-      return playerRef.current?.currentTime ?? 0
+      return videoRef.current?.currentTime ?? 0
     },
     getDuration: () => {
-      return playerRef.current?.duration ?? 0
+      return videoRef.current?.duration ?? 0
     },
   }))
+
+  // Drive play/pause from the isPlaying prop
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !url) return
+    if (isPlaying) {
+      video.play().catch(() => {})
+    } else {
+      video.pause()
+    }
+  }, [isPlaying, url])
 
   const handleBuffer = useCallback(() => {
     setIsBuffering(true)
@@ -155,28 +165,19 @@ const VideoPlayer = forwardRef(function VideoPlayer(
         backgroundColor: '#000',
       }}
     >
-      <ReactPlayer
-        ref={playerRef}
+      <video
+        ref={videoRef}
         src={url}
-        playing={isPlaying}
         muted={muted}
-        controls={false}
-        width="100%"
-        height="100%"
+        playsInline
+        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
         onPlay={onPlay}
         onPause={onPause}
         onTimeUpdate={handleTimeUpdate}
         onDurationChange={handleDurationChange}
         onWaiting={handleBuffer}
         onPlaying={handleBufferEnd}
-        onReady={onReady}
-        config={{
-          youtube: {
-            playerVars: {
-              origin: typeof window !== 'undefined' ? window.location.origin : '',
-            },
-          },
-        }}
+        onLoadedMetadata={onReady}
       />
 
       {/* Buffering indicator */}

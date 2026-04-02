@@ -135,7 +135,8 @@ export default function RoomPage() {
   }, [broadcast, updateRoomUrl])
 
   const handleToggleFullscreen = useCallback(() => {
-    const el = document.documentElement
+    const el = document.getElementById('ast-video-player')
+    if (!el) return
     if (!document.fullscreenElement && !document.webkitFullscreenElement) {
       ;(el.requestFullscreen ?? el.webkitRequestFullscreen)?.call(el)
     } else {
